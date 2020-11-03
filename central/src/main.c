@@ -7,18 +7,22 @@
 #include <signal.h>
 #include <pthread.h>
 
+#include <tcp_utils.h>
+
 #define MIN_ROWS 24
 #define MIN_COLS 90
 
 // Commands
 #define CMD_EXIT 48     // 0
 #define CMD_1    49     // 1
+#define CMD_2    50     // 2
+#define CMD_3    51     // 3
 
 pthread_t keyboard_thread;
 pthread_t tcp_server_thread;
 
 void *watchKeyboard(void *args);
-void *watchTCP(void *args);
+void *handleTCPserver(void *args);
 
 void printMenu(WINDOW *menuWindow);
 
@@ -33,38 +37,6 @@ int main(){
     signal(SIGINT, safeExit);
     signal(SIGTERM, safeExit);
 
-    // Initialize BME280
-    // struct identifier id;
-    // if((id.fd = open(I2C_PATH, O_RDWR)) < 0) {
-    //     endwin();
-    //     fprintf(stderr, "Falha na abertura do canal I2C %s\n", I2C_PATH);
-    //     exit(2);
-    // }
-    // id.dev_addr = BME280_I2C_ADDR_PRIM;
-    // if(ioctl(id.fd, I2C_SLAVE, id.dev_addr) < 0) {
-    //     endwin();
-    //     fprintf(stderr, "Falha na comunicaçaõ I2C\n");
-    //     exit(3);
-    // }
-    // dev.intf = BME280_I2C_INTF;
-    // dev.read = user_i2c_read;
-    // dev.write = user_i2c_write;
-    // dev.delay_us = user_delay_us;
-    // dev.intf_ptr = &id;
-    // int8_t rslt = bme280_init(&dev);
-    // if(rslt != BME280_OK) {
-    //     endwin();
-    //     fprintf(stderr, "Falha na inicialização do dispositivo(codigo %+d).\n", rslt);
-    //     exit(4);
-    // }
-
-    // Initialize bcm2835
-    // if(!bcm2835_init()){
-    //     fprintf(stderr, "Erro na inicialização do bcm2835\n");
-    //     exit(5);
-    // };
-    // bcm2835_gpio_fsel(RPI_V2_GPIO_P1_18, BCM2835_GPIO_FSEL_OUTP);
-    // bcm2835_gpio_fsel(RPI_V2_GPIO_P1_16, BCM2835_GPIO_FSEL_OUTP);
 
     // Initialize ncurses
     initscr();
@@ -130,10 +102,10 @@ int startThreads(WINDOW *inputWindow, WINDOW *sensorsWindow){
         exit(-1);
     }
 
-    if(pthread_create(&tcp_server_thread, NULL, watchTCP, (void *) inputWindow)){
+    if(pthread_create(&tcp_server_thread, NULL, handleTCPserver, (void *) sensorsWindow)){
         endwin();
-        fprintf(stderr, "ERRO: Falha na criacao de thread(1)\n");
-        exit(-1);
+        fprintf(stderr, "ERRO: Falha na criacao de thread(2)\n");
+        exit(-2);
     }
 
     return 0;
@@ -149,25 +121,37 @@ void *watchKeyboard(void *args){
             case CMD_1:{
                 echo();
 
-                int tmp;
-                mvwprintw(inputWindow, 1, 1, "Insira ...");
+                int tmp[2];
+                mvwprintw(inputWindow, 1, 1, "Insira ... qual lamp");
                 mvwprintw(inputWindow, 2, 1, "> ");
-                wscanw(inputWindow, "%d", &tmp);
+                wscanw(inputWindow, "%d", &tmp[0]);
+                mvwprintw(inputWindow, 1, 1, "Insira ... 0 = desliga, 1 liga");
+                mvwprintw(inputWindow, 2, 1, "> ");
+                wscanw(inputWindow, "%d", &tmp[1]);
+
+                int to_send = 0;
+                to_send += 0x10 * (tmp[0]);
+                to_send |= 0x0F & tmp[1]; 
+                // 0 0 => 0x10
+                // 1 1 => 0x21
+
+                if(tcp_send_int(to_send)){
+                    ;// ?
+                }
                 
                 noecho();
+            }
+            case CMD_2:{
+                break;
+            }
+            case CMD_3:{
+                // alarm = 1 xD
                 break;
             }
         }  
         wclear(inputWindow);
         box(inputWindow, 0, 0);
         wrefresh(inputWindow);
-    }
-    return NULL;
-}
-
-void *watchTCP(void *args){
-    while(1){
-        sleep(1);
     }
     return NULL;
 }
