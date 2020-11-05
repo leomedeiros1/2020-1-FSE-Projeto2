@@ -128,8 +128,8 @@ void *handleTCPclient(void *args){ // polling -> alarm
         float temp, hum;
         int rslt = get_sensor_data_forced_mode(&dev, &temp, &hum);
         if (rslt == BME280_OK){
-            tcp_send_float(temp);
-            tcp_send_float(hum);
+            if(tcp_send_float(temp)) printf("Faio1\n");
+            if(tcp_send_float(hum)) printf("Faio1\n");
             printf("  %f %f \n", temp, hum);
         }else{
             printf("XD\n");
