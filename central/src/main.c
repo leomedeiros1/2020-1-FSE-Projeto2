@@ -186,7 +186,6 @@ void *handleTCPserver(void *args){
     tcp_send_int(0xFF);
     tcp_wait_client();
     tcp_recv_arr(inpt, sizeof(inpt));
-    tcp_wait_client();
     tcp_recv_arr(outp, sizeof(outp));
     while(1){
         ++test;
@@ -231,7 +230,6 @@ void printMenu(WINDOW *menuWindow){
 }
 
 void print_sensors(WINDOW *sensorsWindow){
-    wclear(sensorsWindow);
     box(sensorsWindow, 0, 0);
     wrefresh(sensorsWindow);
     mvwprintw(sensorsWindow, 1, 1, "Lampada Cozinha (1):..........%s ", (outp[0] ? "ON" : "OFF"));

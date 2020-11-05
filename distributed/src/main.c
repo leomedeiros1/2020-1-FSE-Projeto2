@@ -131,7 +131,8 @@ void *handleTCPclient(void *args){ // polling -> alarm
             tcp_send_float(temp);
             tcp_send_float(hum);
         }
-        if(!val) usleep(2000000);
+        // usleep(2000000);
+        sleep(2);
     }
 
     return NULL;
