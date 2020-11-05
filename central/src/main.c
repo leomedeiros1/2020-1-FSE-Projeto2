@@ -208,9 +208,9 @@ void *handleTCPserver(void *args){
         tcp_recv_float(&_temp);
         tcp_wait_client();
         tcp_recv_float(&_hum);
-        if(_temp > 0.0f && _temp <50.0f)
+        // if(_temp > 0.0f && _temp <50.0f)
             temp = _temp;
-        if(_hum > 0.0f && _hum <100.0f)
+        // if(_hum > 0.0f && _hum <100.0f)
             hum = _hum;
 
         tcp_close_tmp_client();
