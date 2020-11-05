@@ -88,20 +88,17 @@ void *handleTCPclient(void *args){ // polling -> alarm
         
         // read gpio inpt]
         int val;
-        if((val = get_gpio_inpt(inpt)) != 0){
-            // send_int
+        if((val = get_gpio_change(inpt, outp)) != 0){
             tcp_send_int(val);
             printf("TCP Client: Encontrei uma mudança de estado\n");
         }else{
             tcp_send_int(0x0);
             printf("TCP Client: Nada parar ver por aqui\n");
-            printf("Air 2: %d\n", outp[5]);
         }
         // bme_get_temp e hum
         // tcp_send_double temp
         // tcp_send_double hum
-        get_gpio_outp(outp);
-        usleep(2000000);
+        if(!val) usleep(2000000);
     }
 
     return NULL;

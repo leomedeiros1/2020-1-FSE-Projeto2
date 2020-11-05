@@ -123,3 +123,7 @@ void close_tcp(){
     close(server_socket);
     close(tmp_client_socket);
 }
+
+void tcp_close_tmp_client(){
+    close(tmp_client_socket);
+}

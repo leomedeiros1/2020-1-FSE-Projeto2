@@ -15,6 +15,7 @@ int tcp_recv_int(int *val);
 int tcp_send_int(int val);
 int tcp_recv_double(double *val);
 int tcp_recv_arr(int arr[], int len);
+void tcp_close_tmp_client();
 void close_tcp();
 
 #endif

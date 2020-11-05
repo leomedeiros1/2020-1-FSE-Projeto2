@@ -7,8 +7,6 @@
 
 #include "tcp_utils.h"
 
-#include "gpio_utils.h"
-
 #define DESTINATION_PORT 10026
 #define DESTINATION_IP "192.168.0.53"
 
@@ -68,6 +66,21 @@ int init_tcp_client(){
 }
 
 int tcp_send_int(int val){
+    init_tcp_client();
+    if(connect(client_socket, (struct sockaddr *) &target_addr, 
+							sizeof(target_addr)) < 0)
+    {
+        return -5;
+    }
+    if(send(client_socket, &val, sizeof(val), 0) < sizeof(val)){
+        return -1;
+    }
+    // recv?
+    close(client_socket);
+    return 0;
+}
+
+int tcp_send_double(double val){
     init_tcp_client();
     if(connect(client_socket, (struct sockaddr *) &target_addr, 
 							sizeof(target_addr)) < 0)

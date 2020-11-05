@@ -135,30 +135,38 @@ void *watchKeyboard(void *args){
             case CMD_1:{
                 echo();
 
-                int tmp[2];
+                int tmp;
                 mvwprintw(inputWindow, 1, 1, "Insira ... qual lamp");
                 mvwprintw(inputWindow, 2, 1, "> ");
-                wscanw(inputWindow, "%d", &tmp[0]);
-                mvwprintw(inputWindow, 1, 1, "Insira ... 0 = desliga, 1 liga");
-                mvwprintw(inputWindow, 2, 1, "                               ");
-                mvwprintw(inputWindow, 2, 1, "> ");
-                wscanw(inputWindow, "%d", &tmp[1]);
+                wscanw(inputWindow, "%d", &tmp);
 
                 int to_send = 0;
-                to_send += 0x10 * (tmp[0]);
-                to_send |= 0x0F & tmp[1]; 
-                // 0 0 => 0x10
-                // 1 1 => 0x21
+                to_send+=tmp;
+                // to_send += 0x10 * (tmp[0]);
+                // to_send |= 0x0F & tmp[1];        
 
                 if((op_code=tcp_send_int(to_send))){
                     mvwprintw(inputWindow, 1, 1, "Falha no envio do comando (%d)\n", op_code);
                     mvwprintw(inputWindow, 2, 1, "> ");
-                    wscanw(inputWindow, "%d", &tmp[1]);
+                    wscanw(inputWindow, "%d", &tmp);
                 }
                 
                 noecho();
             }
             case CMD_2:{
+                echo();
+                int tmp;
+                mvwprintw(inputWindow, 1, 1, "Insira ... qual ar");
+                mvwprintw(inputWindow, 2, 1, "> ");
+                wscanw(inputWindow, "%d", &tmp);
+
+                int to_send = 4;
+                to_send+=tmp;
+
+                if((op_code=tcp_send_int(to_send))){
+                    //faio
+                }
+                noecho();
                 break;
             }
             case CMD_3:{
@@ -191,18 +199,22 @@ void *handleTCPserver(void *args){
         if(tcp_wait_client()){
             continue;
         }
-        int comm; 
+        int comm;
         if(tcp_recv_int(&comm) == 0){
-            //ALAAAARM
-            // usa o valor de comm
+            if(comm & 0xF0){
+                //ALAAAARM
+                inpt[comm & 0x0F] = 1 - inpt[comm & 0x0F];
+            }else if(comm != 0xFF){
+                outp[comm & 0x0F] = 1 - outp[comm & 0x0F];
+            }
         }
         
         // tcp_recv_double(&temp);
         // tcp_recv_double(&hum);
 
-        // tcp_close_tmp_client();
+        tcp_close_tmp_client();
 
-        usleep(200000);
+        // usleep(200000);
     }
     return NULL;
 }
@@ -211,7 +223,9 @@ void printMenu(WINDOW *menuWindow){
     box(menuWindow, 0, 0);
     wrefresh(menuWindow);
     mvwprintw(menuWindow, 1, 1, "Lista de comandos disponíveis:");
-    mvwprintw(menuWindow, 2, 1, "1 - Definir temperatura de referência");
+    mvwprintw(menuWindow, 2, 1, "1 - Alterar uma lampada");
+    mvwprintw(menuWindow, 3, 1, "2 - Alterar um ar-condicionado");
+
     mvwprintw(menuWindow, 6, 1, "0 ou CTRL+C - Sair");
     wrefresh(menuWindow);
 }
@@ -219,14 +233,14 @@ void printMenu(WINDOW *menuWindow){
 void print_sensors(WINDOW *sensorsWindow){
     box(sensorsWindow, 0, 0);
     wrefresh(sensorsWindow);
-    mvwprintw(sensorsWindow, 1, 1, "Lampada Cozinha (1): %s", (outp[0] ? "ON" : "OFF"));
-    mvwprintw(sensorsWindow, 2, 1, "Lampada Sala (2): %s", (outp[1] ? "ON" : "OFF"));
-    mvwprintw(sensorsWindow, 3, 1, "Lampada Quarto1 (3): %s", (outp[2] ? "ON" : "OFF"));
-    mvwprintw(sensorsWindow, 4, 1, "Lampada Quarto2 (4): %s", (outp[3] ? "ON" : "OFF"));
-    mvwprintw(sensorsWindow, 5, 1, "Ar-condicionado Quarto1 (1): %s", (outp[4] ? "ON" : "OFF"));
-    mvwprintw(sensorsWindow, 6, 1, "Ar-condicionado Quarto2 (2): %s", (outp[5] ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 1, 1, "Lampada Cozinha (1):..........%s", (outp[0] ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 2, 1, "Lampada Sala (2):.............%s", (outp[1] ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 3, 1, "Lampada Quarto1 (3):..........%s", (outp[2] ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 4, 1, "Lampada Quarto2 (4):..........%s", (outp[3] ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 5, 1, "Ar-condicionado Quarto1 (1):..%s", (outp[4] ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 6, 1, "Ar-condicionado Quarto2 (2):..%s", (outp[5] ? "ON" : "OFF"));
     // mvwprintw(sensorsWindow, 10, 1, "Alarme: (2): %s", (alarm_bool ? "ON" : "OFF"));
 
-    mvwprintw(sensorsWindow, 10, 1, "DB: %d - %d", test, outp[5]);
+    mvwprintw(sensorsWindow, 10, 1, "DB: %d", test);
     wrefresh(sensorsWindow);
 }
