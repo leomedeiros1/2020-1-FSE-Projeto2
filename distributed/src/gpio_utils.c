@@ -111,6 +111,16 @@ int get_gpio_inpt(int inpt[]){
     return 0x0;
 }
 
+void get_gpio_outp(int outp[]){
+    outp[0] = bcm2835_gpio_lev(LAMP_1);
+    outp[1] = bcm2835_gpio_lev(LAMP_2);
+    outp[2] = bcm2835_gpio_lev(LAMP_3);
+    outp[3] = bcm2835_gpio_lev(LAMP_4);
+
+    outp[4] = bcm2835_gpio_lev(AIR_1);
+    outp[5] = bcm2835_gpio_lev(AIR_2);
+}
+
 void get_gpio_all(int inpt[], int outp[]){
     outp[0] = bcm2835_gpio_lev(LAMP_1);
     outp[1] = bcm2835_gpio_lev(LAMP_2);

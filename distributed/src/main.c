@@ -53,7 +53,8 @@ int main(){
 
 void safeExit(int signal){
     // Finish threads
-
+    pthread_cancel(tcp_client_thread);
+    pthread_cancel(tcp_server_thread);
     // Turn actuators off
 
     close_tcp();
@@ -94,10 +95,12 @@ void *handleTCPclient(void *args){ // polling -> alarm
         }else{
             tcp_send_int(0x0);
             printf("TCP Client: Nada parar ver por aqui\n");
+            printf("Lampada 1: %d\n", outp[0]);
         }
         // bme_get_temp e hum
         // tcp_send_double temp
         // tcp_send_double hum
+        get_gpio_outp(outp);
         usleep(2000000);
     }
 

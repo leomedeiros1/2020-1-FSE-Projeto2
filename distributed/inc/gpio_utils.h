@@ -36,6 +36,7 @@
 int init_bcm2835();
 int set_device(int key, int outp[]);
 int get_gpio_inpt(int inpt[]);
+void get_gpio_outp(int outp[]);
 void get_gpio_all(int inpt[], int outp[]);
 
 #endif

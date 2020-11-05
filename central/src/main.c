@@ -90,7 +90,8 @@ int main(){
 
 void safeExit(int signal){
     // Finish threads
-
+    pthread_cancel(keyboard_thread);
+    pthread_cancel(tcp_server_thread);
     // SEND MSG to Distributed: Turn actuators off
 
     close_tcp();
