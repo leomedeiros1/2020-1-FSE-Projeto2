@@ -15,6 +15,7 @@ int tcp_recv_int(int *val);
 int tcp_send_data_comm(data_comm *data);
 int tcp_send_arr(int arr[], int len);
 int tcp_send_double(double val);
+int tcp_send_float(float val);
 int tcp_wait_client();
 void tcp_close_tmp_client();
 void close_tcp();

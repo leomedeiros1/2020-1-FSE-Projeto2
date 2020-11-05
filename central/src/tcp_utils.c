@@ -110,6 +110,15 @@ int tcp_recv_double(double *val){
     return 0;
 }
 
+int tcp_recv_float(float *val){
+    int recv_size = sizeof(val);
+    if((recv_size = recv(tmp_client_socket, val, sizeof(val), 0)) < sizeof(val)){
+        // continue;
+        return -1;
+    }
+    return 0;
+}
+
 int tcp_recv_arr(int arr[], int len){
     if(recv(tmp_client_socket, arr, len, 0) < len){
         // continue;

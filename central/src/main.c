@@ -16,6 +16,7 @@ pthread_t keyboard_thread;
 pthread_t tcp_server_thread;
 
 int inpt[8], outp[6];
+float temp, hum;
 int test=0;
 
 void *watchKeyboard(void *args);
@@ -202,9 +203,13 @@ void *handleTCPserver(void *args){
                 outp[comm & 0x0F] = 1 - outp[comm & 0x0F];
             }
         }
-        
-        // tcp_recv_double(&temp);
-        // tcp_recv_double(&hum);
+        float _temp, _hum;
+        tcp_recv_float(&_temp);
+        tcp_recv_float(&_hum);
+        if(temp > 0.0f && temp <50.0f)
+            temp = _temp;
+        if(hum > 0.0f && hum <50.0f)
+            hum = _hum;
 
         tcp_close_tmp_client();
 
@@ -235,6 +240,9 @@ void print_sensors(WINDOW *sensorsWindow){
     mvwprintw(sensorsWindow, 4, 1, "Lampada Quarto2 (4):..........%s ", (outp[3] ? "ON" : "OFF"));
     mvwprintw(sensorsWindow, 5, 1, "Ar-condicionado Quarto1 (1):..%s ", (outp[4] ? "ON" : "OFF"));
     mvwprintw(sensorsWindow, 6, 1, "Ar-condicionado Quarto2 (2):..%s ", (outp[5] ? "ON" : "OFF"));
+
+    mvwprintw(sensorsWindow, 8, 1, "Temperatura :.................%f ", temp);
+    mvwprintw(sensorsWindow, 9, 1, "Humidade :....................%f ", hum);
     // mvwprintw(sensorsWindow, 10, 1, "Alarme: (2): %s", (alarm_bool ? "ON" : "OFF"));
 
     mvwprintw(sensorsWindow, 10, 1, "DB: %d", test);

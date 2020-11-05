@@ -5,10 +5,15 @@
 #include <fcntl.h>
 #include <signal.h>
 #include <pthread.h>
+#include <linux_userspace.c>
 #include <bcm2835.h>
 
 #include "gpio_utils.h"
 #include "tcp_utils.h"
+
+static const char I2C_PATH[] = "/dev/i2c-1";
+
+struct bme280_dev dev;
 
 pthread_t tcp_client_thread;
 pthread_t tcp_server_thread;
@@ -40,6 +45,28 @@ int main(){
     if((t_err=init_tcp_server())){
         fprintf(stderr, "Erro na inicialização do tcp (%d)\n", t_err);
         exit(2);
+    }
+
+    // Initialize BME280
+    struct identifier id;
+    if((id.fd = open(I2C_PATH, O_RDWR)) < 0) {
+        fprintf(stderr, "Falha na abertura do canal I2C %s\n", I2C_PATH);
+        exit(3);
+    }
+    id.dev_addr = BME280_I2C_ADDR_PRIM;
+    if(ioctl(id.fd, I2C_SLAVE, id.dev_addr) < 0) {
+        fprintf(stderr, "Falha na comunicaçaõ I2C\n");
+        exit(4);
+    }
+    dev.intf = BME280_I2C_INTF;
+    dev.read = user_i2c_read;
+    dev.write = user_i2c_write;
+    dev.delay_us = user_delay_us;
+    dev.intf_ptr = &id;
+    int8_t rslt = bme280_init(&dev);
+    if(rslt != BME280_OK) {
+        fprintf(stderr, "Falha na inicialização do dispositivo(codigo %+d).\n", rslt);
+        exit(5);
     }
 
     get_gpio_all(inpt, outp);
@@ -98,6 +125,12 @@ void *handleTCPclient(void *args){ // polling -> alarm
         // bme_get_temp e hum
         // tcp_send_double temp
         // tcp_send_double hum
+        float temp, hum;
+        int rslt = get_sensor_data_forced_mode(&dev, &temp, &hum);
+        if (rslt == BME280_OK){
+            tcp_send_float(temp);
+            tcp_send_float(hum);
+        }
         if(!val) usleep(2000000);
     }
 

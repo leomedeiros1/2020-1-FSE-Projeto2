@@ -95,6 +95,21 @@ int tcp_send_double(double val){
     return 0;
 }
 
+int tcp_send_float(float val){
+    init_tcp_client();
+    if(connect(client_socket, (struct sockaddr *) &target_addr, 
+							sizeof(target_addr)) < 0)
+    {
+        return -5;
+    }
+    if(send(client_socket, &val, sizeof(val), 0) < sizeof(val)){
+        return -1;
+    }
+    // recv?
+    close(client_socket);
+    return 0;
+}
+
 int tcp_wait_client(){
     tmp_client_len = sizeof(tmp_client_addr);
     if((tmp_client_socket = accept(server_socket, 

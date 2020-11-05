@@ -129,7 +129,7 @@ int8_t user_i2c_write(uint8_t reg_addr, const uint8_t *data, uint32_t len, void 
  * @retval BME280_E_NVM_COPY_FAILED - Error: NVM copy failed
  *
  */
-int8_t get_sensor_data_forced_mode(struct bme280_dev *dev, float *temp);
+int8_t get_sensor_data_forced_mode(struct bme280_dev *dev, float *temp, float *hum);
 
 /*!
  * @brief This function starts execution of the program.
@@ -268,7 +268,7 @@ void print_sensor_data(struct bme280_data *comp_data)
 /*!
  * @brief This API reads the sensor temperature, pressure and humidity data in forced mode.
  */
-int8_t get_sensor_data_forced_mode(struct bme280_dev *dev, float *temp)
+int8_t get_sensor_data_forced_mode(struct bme280_dev *dev, float *temp, float *hum)
 {
     /* Variable to define the result */
     int8_t rslt = BME280_OK;
@@ -334,14 +334,16 @@ int8_t get_sensor_data_forced_mode(struct bme280_dev *dev, float *temp)
     }
 
             // float _temp, _press, _hum;
-    float _temp;
+    float _temp, _hum;
 
 #ifdef BME280_FLOAT_ENABLE
     // _temp = comp_data.temperature;
     // _press = 0.01 * comp_data.pressure;
     // _hum = comp_data.humidity;
     _temp = comp_data.temperature;
+    _hum = comp_data.humidity;
     *temp = _temp;
+    *hum = _hum;
 #else
 #ifdef BME280_64BIT_ENABLE
     _temp = 0.01f * comp_data.temperature;
