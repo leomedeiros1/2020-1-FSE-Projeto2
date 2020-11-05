@@ -73,6 +73,7 @@ int tcp_send_int(int val){
         return -1;
     }
     // recv?
+    close(client_socket);
     return 0;
 }
 
@@ -109,6 +110,7 @@ int tcp_send_arr(int arr[], int len){
         return -1;
     }
     // recv?
+    close(client_socket);
     return 0;
 }
 

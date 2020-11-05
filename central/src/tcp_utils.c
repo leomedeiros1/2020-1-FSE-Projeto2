@@ -92,6 +92,7 @@ int tcp_send_int(int val){
         return -1;
     }
     // recv?
+    close(client_socket);
     return 0;
 }
 
