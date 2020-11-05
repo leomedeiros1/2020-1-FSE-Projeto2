@@ -16,7 +16,7 @@ pthread_t keyboard_thread;
 pthread_t tcp_server_thread;
 
 int inpt[8], outp[6];
-float temp, hum;
+float temp=999, hum=999;
 int test=0;
 
 void *watchKeyboard(void *args);
