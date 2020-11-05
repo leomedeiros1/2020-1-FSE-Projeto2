@@ -36,7 +36,11 @@ int main(){
     }
 
     // Initialize tcp
-    int init_tcp();
+    int t_err;
+    if((t_err=init_tcp())){
+        fprintf(stderr, "Erro na inicialização do tcp (%d)\n", t_err);
+        exit(2);
+    }
 
     get_gpio_all(inpt, outp);
     startThreads();

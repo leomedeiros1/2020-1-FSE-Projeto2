@@ -57,12 +57,6 @@ int init_tcp(){
 	target_addr.sin_addr.s_addr = inet_addr(DESTINATION_IP);
 	target_addr.sin_port = htons(DESTINATION_PORT);
 
-    if(connect(client_socket, (struct sockaddr *) &target_addr, 
-							sizeof(target_addr)) < 0)
-    {
-        return -5;
-    }
-    return 0;
 }
 
 int tcp_wait_client(){
@@ -88,6 +82,11 @@ int tcp_recv_int(int *val){
 }
 
 int tcp_send_int(int val){
+    if(connect(client_socket, (struct sockaddr *) &target_addr, 
+							sizeof(target_addr)) < 0)
+    {
+        return -5;
+    }
     if(send(client_socket, &val, sizeof(val), 0) < sizeof(val)){
         return -1;
     }

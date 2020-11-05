@@ -40,7 +40,11 @@ int main(){
     signal(SIGTERM, safeExit);
 
     // Initialize tcp
-    int init_tcp();
+    int t_err;
+    if((t_err=init_tcp())){
+        fprintf(stderr, "Erro na inicialização do tcp (%d)\n", t_err);
+        exit(2);
+    }
 
     // Initialize ncurses
     initscr();
@@ -141,7 +145,7 @@ void *watchKeyboard(void *args){
                 // 1 1 => 0x21
 
                 if(tcp_send_int(to_send)){
-                    ;// ?
+                    mvwprintw(inputWindow, 1, 1, "Falha no envio do comando\n");
                 }
                 
                 noecho();
