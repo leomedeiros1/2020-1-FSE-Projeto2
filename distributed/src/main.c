@@ -130,6 +130,9 @@ void *handleTCPclient(void *args){ // polling -> alarm
         if (rslt == BME280_OK){
             tcp_send_float(temp);
             tcp_send_float(hum);
+            printf("  %f %f \n", temp, hum);
+        }else{
+            printf("XD\n");
         }
         // usleep(2000000);
         sleep(2);
