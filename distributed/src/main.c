@@ -92,7 +92,7 @@ void *handleTCPclient(void *args){ // polling -> alarm
             tcp_send_int(val);
             printf("TCP Client: Encontrei uma mudança de estado\n");
         }else{
-            tcp_send_int(0x0);
+            tcp_send_int(0xFF);
             printf("TCP Client: Nada parar ver por aqui\n");
         }
         // bme_get_temp e hum

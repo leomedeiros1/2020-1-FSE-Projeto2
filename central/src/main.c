@@ -12,12 +12,6 @@
 #define MIN_ROWS 24
 #define MIN_COLS 90
 
-// Commands
-#define CMD_EXIT 48     // 0
-#define CMD_1    49     // 1
-#define CMD_2    50     // 2
-#define CMD_3    51     // 3
-
 pthread_t keyboard_thread;
 pthread_t tcp_server_thread;
 
@@ -151,6 +145,7 @@ void *watchKeyboard(void *args){
                 }
                 
                 noecho();
+                break;
             }
             case KEY_F(3):{
                 echo();
@@ -168,7 +163,7 @@ void *watchKeyboard(void *args){
                 noecho();
                 break;
             }
-            case CMD_3:{
+            case KEY_F(4):{
                 // alarm = 1 xD
                 break;
             }
@@ -222,10 +217,11 @@ void printMenu(WINDOW *menuWindow){
     box(menuWindow, 0, 0);
     wrefresh(menuWindow);
     mvwprintw(menuWindow, 1, 1, "Lista de comandos disponíveis:");
-    mvwprintw(menuWindow, 2, 1, "1 - Alterar uma lampada");
-    mvwprintw(menuWindow, 3, 1, "2 - Alterar um ar-condicionado");
+    mvwprintw(menuWindow, 2, 1, "F2 - Alterar uma lampada");
+    mvwprintw(menuWindow, 3, 1, "F3 - Alterar um ar-condicionado");
+    mvwprintw(menuWindow, 4, 1, "F4 - Alterar alarme");
 
-    mvwprintw(menuWindow, 6, 1, "0 ou CTRL+C - Sair");
+    mvwprintw(menuWindow, 6, 1, "F1 ou CTRL+C - Sair");
     wrefresh(menuWindow);
 }
 
