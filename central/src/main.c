@@ -22,6 +22,7 @@ pthread_t keyboard_thread;
 pthread_t tcp_server_thread;
 
 int inpt[8], outp[6];
+int test=0;
 
 void *watchKeyboard(void *args);
 void *handleTCPserver(void *args);
@@ -182,6 +183,7 @@ void *handleTCPserver(void *args){
     tcp_recv_arr(inpt, sizeof(inpt));
     tcp_recv_arr(outp, sizeof(outp));
     while(1){
+        ++test;
         print_sensors(sensorsWindow);
         if(tcp_wait_client()){
             continue;
@@ -222,5 +224,7 @@ void print_sensors(WINDOW *sensorsWindow){
     mvwprintw(sensorsWindow, 6, 1, "Ar-condicionado Quarto1 (1): %s", (inpt[5] ? "ON" : "OFF"));
     mvwprintw(sensorsWindow, 7, 1, "Ar-condicionado Quarto2 (2): %s", (inpt[6] ? "ON" : "OFF"));
     // mvwprintw(sensorsWindow, 10, 1, "Alarme: (2): %s", (alarm_bool ? "ON" : "OFF"));
+
+    mvwprintw(sensorsWindow, 10, 1, "DB: %d", test);
     wrefresh(sensorsWindow);
 }

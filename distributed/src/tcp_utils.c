@@ -112,7 +112,7 @@ int tcp_send_arr(int arr[], int len){
     {
         return -5;
     }
-    if(send(client_socket, &arr, len, 0) < len){
+    if(send(client_socket, arr, len, 0) < len){
         return -1;
     }
     // recv?

@@ -82,19 +82,23 @@ int startThreads(){
 }
 
 void *handleTCPclient(void *args){ // polling -> alarm
+    printf("TCP Client up");
     while(1){
+        
         // read gpio inpt]
         int val;
         if((val = get_gpio_inpt(inpt)) != 0){
             // send_int
             tcp_send_int(val);
+            printf("TCP Client: Encontrei uma mudança de estado\n");
         }else{
             tcp_send_int(0x0);
+            printf("TCP Client: Nada parar ver por aqui\n");
         }
         // bme_get_temp e hum
         // tcp_send_double temp
         // tcp_send_double hum
-        usleep(200000);
+        usleep(2000000);
     }
 
     return NULL;
