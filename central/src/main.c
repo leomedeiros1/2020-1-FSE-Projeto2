@@ -39,6 +39,8 @@ int main(){
     signal(SIGINT, safeExit);
     signal(SIGTERM, safeExit);
 
+    // Initialize tcp
+    int init_tcp();
 
     // Initialize ncurses
     initscr();

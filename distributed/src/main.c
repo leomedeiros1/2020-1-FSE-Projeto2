@@ -29,10 +29,14 @@ int main(){
     signal(SIGINT, safeExit);
     signal(SIGTERM, safeExit);
 
+    // Initialize bcm2835
     if (init_bcm2835() < 0){
         fprintf(stderr, "Erro na inicialização do bcm2835\n");
         exit(1);
     }
+
+    // Initialize tcp
+    int init_tcp();
 
     get_gpio_all(inpt, outp);
     startThreads();
@@ -91,16 +95,18 @@ void *handleTCPclient(void *args){ // polling -> alarm
 }
 
 void *handleTCPserver(void *args){
+    printf("TCP Server up\n");
     while(1){
         if(tcp_wait_client()){
             continue;
         }
+        printf("TCP Server: Client connected\n");
 
         int comm; 
         if(tcp_recv_int(&comm)){
             continue;
         }
-        printf("Comando recebido 0x%x\n", comm);
+        printf("TCP Server: Comando recebido 0x%x\n", comm);
         //trata
         if(comm == 0xFF){
             tcp_send_arr(inpt, sizeof(inpt));
