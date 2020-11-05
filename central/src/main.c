@@ -164,6 +164,7 @@ void *watchKeyboard(void *args){
 void *handleTCPserver(void *args){
     WINDOW *sensorsWindow = (WINDOW *) args;
     box(sensorsWindow, 0, 0);
+    wrefresh(sensorsWindow);
     
 
     //tcp_send(0xFF)
