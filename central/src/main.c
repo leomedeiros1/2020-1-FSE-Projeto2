@@ -27,6 +27,7 @@ void *watchKeyboard(void *args);
 void *handleTCPserver(void *args);
 
 void printMenu(WINDOW *menuWindow);
+void print_sensors(WINDOW *sensorsWindow);
 
 int startThreads(WINDOW *inputWindow, WINDOW *sensorsWindow);
 
@@ -123,6 +124,7 @@ int startThreads(WINDOW *inputWindow, WINDOW *sensorsWindow){
 
 void *watchKeyboard(void *args){
     WINDOW *inputWindow = (WINDOW *) args;
+    wclear(inputWindow);
     int op_code;
     box(inputWindow, 0, 0);
     wrefresh(inputWindow);
@@ -171,15 +173,16 @@ void *watchKeyboard(void *args){
 
 void *handleTCPserver(void *args){
     WINDOW *sensorsWindow = (WINDOW *) args;
+    wclear(sensorsWindow);
     box(sensorsWindow, 0, 0);
     wrefresh(sensorsWindow);
     
 
-    //tcp_send(0xFF)
-    //tcp_recv_arr(inpt, sizeof(inpt))
-    //tcp_recv_arr(outp, sizeof(outp))
+    tcp_send_int(0xFF);
+    tcp_recv_arr(inpt, sizeof(inpt));
+    tcp_recv_arr(outp, sizeof(outp));
     while(1){
-        // print_sensors(sensorsWindow);
+        print_sensors(sensorsWindow);
         if(tcp_wait_client()){
             continue;
         }
@@ -206,4 +209,18 @@ void printMenu(WINDOW *menuWindow){
     mvwprintw(menuWindow, 2, 1, "1 - Definir temperatura de referência");
     mvwprintw(menuWindow, 6, 1, "0 ou CTRL+C - Sair");
     wrefresh(menuWindow);
+}
+
+void print_sensors(WINDOW *sensorsWindow){
+    box(sensorsWindow, 0, 0);
+    wrefresh(sensorsWindow);
+    mvwprintw(sensorsWindow, 1, 1, "Lampada Cozinha (1): %s", (inpt[0] ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 2, 1, "Lampada Sala (2): %s", (inpt[1] ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 3, 1, "Lampada Quarto1 (3): %s", (inpt[2] ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 4, 1, "Lampada Quarto2 (4): %s", (inpt[3] ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 5, 1, "Lampada Quarto2 (4): %s", (inpt[4] ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 6, 1, "Ar-condicionado Quarto1 (1): %s", (inpt[5] ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 7, 1, "Ar-condicionado Quarto2 (2): %s", (inpt[6] ? "ON" : "OFF"));
+    // mvwprintw(sensorsWindow, 10, 1, "Alarme: (2): %s", (alarm_bool ? "ON" : "OFF"));
+    wrefresh(sensorsWindow);
 }

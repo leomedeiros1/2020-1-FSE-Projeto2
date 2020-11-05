@@ -117,7 +117,7 @@ void *handleTCPserver(void *args){
         //trata
         if(comm == 0xFF){
             tcp_send_arr(inpt, sizeof(inpt));
-            tcp_send_arr(outp, sizeof(inpt));
+            tcp_send_arr(outp, sizeof(outp));
         }else{
             set_device(comm, outp);
         }

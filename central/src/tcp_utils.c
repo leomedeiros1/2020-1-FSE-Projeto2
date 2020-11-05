@@ -28,7 +28,7 @@ unsigned int tmp_client_len;
 int init_tcp_server(){
     // Init server
     unsigned short server_port = LOCAL_PORT;
-    char *server_ip = LOCAL_IP;
+    // char *server_ip = LOCAL_IP;
 
     if((server_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0){
         return -1;
