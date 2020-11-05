@@ -65,28 +65,26 @@ int init_tcp(){
     return 0;
 }
 
-void *handleTCPserver(void *args){
-    while(1){
-        tmp_client_len = sizeof(tmp_client_addr);
-        if((tmp_client_socket = accept(server_socket, 
-            (struct sockaddr *) &tmp_client_addr, 
-            &tmp_client_len)) < 0)
-        {
-            continue;
-        }
-
-        int recv_size;
-        struct data_comm comm;
-        if((recv_size = recv(tmp_client_socket, &comm, sizeof(data_comm), 0)) < 0){
-			continue;
-		}
-
-        //trata
-        
-
-        close(tmp_client_socket);
+int tcp_wait_client(){
+    tmp_client_len = sizeof(tmp_client_addr);
+    if((tmp_client_socket = accept(server_socket, 
+        (struct sockaddr *) &tmp_client_addr, 
+        &tmp_client_len)) < 0)
+    {
+        // continue;
+        return -1;
     }
-    return NULL;
+
+    return 0;
+}
+
+int tcp_recv_int(int *val){
+    int recv_size = sizeof(val);
+    if((recv_size = recv(tmp_client_socket, val, sizeof(data_comm), 0)) < 0){
+        // continue;
+        return -1;
+    }
+    return 0;
 }
 
 int tcp_send_int(int val){
@@ -94,6 +92,23 @@ int tcp_send_int(int val){
         return -1;
     }
     // recv?
+    return 0;
+}
+
+int tcp_recv_double(double *val){
+    int recv_size = sizeof(val);
+    if((recv_size = recv(tmp_client_socket, val, sizeof(val), 0)) < sizeof(val)){
+        // continue;
+        return -1;
+    }
+    return 0;
+}
+
+int tcp_recv_arr(int arr[], int len){
+    if(recv(tmp_client_socket, arr, len, 0) < len){
+        // continue;
+        return -1;
+    }
     return 0;
 }
 

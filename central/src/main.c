@@ -21,6 +21,8 @@
 pthread_t keyboard_thread;
 pthread_t tcp_server_thread;
 
+int inpt[8], outp[6];
+
 void *watchKeyboard(void *args);
 void *handleTCPserver(void *args);
 
@@ -152,6 +154,35 @@ void *watchKeyboard(void *args){
         wclear(inputWindow);
         box(inputWindow, 0, 0);
         wrefresh(inputWindow);
+    }
+    return NULL;
+}
+
+void *handleTCPserver(void *args){
+    WINDOW *sensorsWindow = (WINDOW *) args;
+    box(sensorsWindow, 0, 0);
+    
+
+    //tcp_send(0xFF)
+    //tcp_recv_arr(inpt, sizeof(inpt))
+    //tcp_recv_arr(outp, sizeof(outp))
+    while(1){
+        // print_sensors(sensorsWindow);
+        if(tcp_wait_client()){
+            continue;
+        }
+        int comm; 
+        if(tcp_recv_int(&comm) == 0){
+            //ALAAAARM
+            // usa o valor de comm
+        }
+        
+        // tcp_recv_double(&temp);
+        // tcp_recv_double(&hum);
+
+        // tcp_close_tmp_client();
+
+        usleep(200000);
     }
     return NULL;
 }
