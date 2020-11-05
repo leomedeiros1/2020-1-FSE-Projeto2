@@ -41,7 +41,7 @@ int main(){
 
     // Initialize tcp
     int t_err;
-    if((t_err=init_tcp())){
+    if((t_err=init_tcp_server())){
         fprintf(stderr, "Erro na inicialização do tcp (%d)\n", t_err);
         exit(2);
     }

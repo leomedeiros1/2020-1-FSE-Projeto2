@@ -8,7 +8,8 @@ typedef struct data_comm{
     int control_lamp[4];
 }data_comm;
 
-int init_tcp();
+int init_tcp_server();
+int init_tcp_client();
 int tcp_wait_client();
 int tcp_recv_int(int *val);
 int tcp_send_int(int val);

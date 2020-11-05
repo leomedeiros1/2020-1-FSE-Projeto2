@@ -25,7 +25,7 @@ struct sockaddr_in tmp_client_addr;
 
 unsigned int tmp_client_len;
 
-int init_tcp(){
+int init_tcp_server(){
     // Init server
     unsigned short server_port = LOCAL_PORT;
     char *server_ip = LOCAL_IP;
@@ -47,6 +47,10 @@ int init_tcp(){
         return -3;
     }
 
+    return 0;
+}
+
+int init_tcp_client(){
     // Init client
     if((client_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0){
         return -4;
@@ -83,6 +87,7 @@ int tcp_recv_int(int *val){
 }
 
 int tcp_send_int(int val){
+    init_tcp_client();
     if(connect(client_socket, (struct sockaddr *) &target_addr, 
 							sizeof(target_addr)) < 0)
     {
