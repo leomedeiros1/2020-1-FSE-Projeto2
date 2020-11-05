@@ -57,6 +57,7 @@ int init_tcp(){
 	target_addr.sin_addr.s_addr = inet_addr(DESTINATION_IP);
 	target_addr.sin_port = htons(DESTINATION_PORT);
 
+    return 0;
 }
 
 int tcp_wait_client(){
