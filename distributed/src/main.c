@@ -95,7 +95,7 @@ void *handleTCPclient(void *args){ // polling -> alarm
         }else{
             tcp_send_int(0x0);
             printf("TCP Client: Nada parar ver por aqui\n");
-            printf("Lampada 1: %d\n", outp[0]);
+            printf("Air 2: %d\n", outp[5]);
         }
         // bme_get_temp e hum
         // tcp_send_double temp
