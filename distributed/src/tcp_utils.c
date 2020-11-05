@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdio.h>
 
 #include "tcp_utils.h"
 
@@ -63,12 +64,12 @@ int init_tcp(){
 }
 
 int tcp_send_int(int val){
-    if(connect(tmp_client_socket, (struct sockaddr *) &target_addr, 
+    if(connect(client_socket, (struct sockaddr *) &target_addr, 
 							sizeof(target_addr)) < 0)
     {
         return -5;
     }
-    if(send(tmp_client_socket, &val, sizeof(val), 0) < sizeof(val)){
+    if(send(client_socket, &val, sizeof(val), 0) < sizeof(val)){
         return -1;
     }
     // recv?
@@ -82,6 +83,7 @@ int tcp_wait_client(){
         &tmp_client_len)) < 0)
     {
         // continue;
+        printf("Erro no acc\n");
         return -1;
     }
 
@@ -98,12 +100,12 @@ int tcp_recv_int(int *val){
 }
 
 int tcp_send_arr(int arr[], int len){
-    if(connect(tmp_client_socket, (struct sockaddr *) &target_addr, 
+    if(connect(client_socket, (struct sockaddr *) &target_addr, 
 							sizeof(target_addr)) < 0)
     {
         return -5;
     }
-    if(send(tmp_client_socket, &arr, len, 0) < len){
+    if(send(client_socket, &arr, len, 0) < len){
         return -1;
     }
     // recv?

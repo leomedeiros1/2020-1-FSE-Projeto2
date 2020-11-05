@@ -146,8 +146,8 @@ void *watchKeyboard(void *args){
                 // 0 0 => 0x10
                 // 1 1 => 0x21
 
-                if(tcp_send_int(to_send)){
-                    mvwprintw(inputWindow, 1, 1, "Falha no envio do comando\n");
+                if((op_code=tcp_send_int(to_send))){
+                    mvwprintw(inputWindow, 1, 1, "Falha no envio do comando (%d)\n", op_code);
                     mvwprintw(inputWindow, 2, 1, "> ");
                     wscanw(inputWindow, "%d", &tmp[1]);
                 }
