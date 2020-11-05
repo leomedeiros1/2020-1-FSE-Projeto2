@@ -136,7 +136,7 @@ void *watchKeyboard(void *args){
                 echo();
 
                 int tmp;
-                mvwprintw(inputWindow, 1, 1, "Insira ... qual lamp");
+                mvwprintw(inputWindow, 1, 1, "Insira ... qual lamp     ");
                 mvwprintw(inputWindow, 2, 1, "> ");
                 wscanw(inputWindow, "%d", &tmp);
 
@@ -156,7 +156,7 @@ void *watchKeyboard(void *args){
             case CMD_2:{
                 echo();
                 int tmp;
-                mvwprintw(inputWindow, 1, 1, "Insira ... qual ar");
+                mvwprintw(inputWindow, 1, 1, "Insira ... qual ar      ");
                 mvwprintw(inputWindow, 2, 1, "> ");
                 wscanw(inputWindow, "%d", &tmp);
 
@@ -231,14 +231,15 @@ void printMenu(WINDOW *menuWindow){
 }
 
 void print_sensors(WINDOW *sensorsWindow){
+    wclear(sensorsWindow);
     box(sensorsWindow, 0, 0);
     wrefresh(sensorsWindow);
-    mvwprintw(sensorsWindow, 1, 1, "Lampada Cozinha (1):..........%s", (outp[0] ? "ON" : "OFF"));
-    mvwprintw(sensorsWindow, 2, 1, "Lampada Sala (2):.............%s", (outp[1] ? "ON" : "OFF"));
-    mvwprintw(sensorsWindow, 3, 1, "Lampada Quarto1 (3):..........%s", (outp[2] ? "ON" : "OFF"));
-    mvwprintw(sensorsWindow, 4, 1, "Lampada Quarto2 (4):..........%s", (outp[3] ? "ON" : "OFF"));
-    mvwprintw(sensorsWindow, 5, 1, "Ar-condicionado Quarto1 (1):..%s", (outp[4] ? "ON" : "OFF"));
-    mvwprintw(sensorsWindow, 6, 1, "Ar-condicionado Quarto2 (2):..%s", (outp[5] ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 1, 1, "Lampada Cozinha (1):..........%s ", (outp[0] ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 2, 1, "Lampada Sala (2):.............%s ", (outp[1] ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 3, 1, "Lampada Quarto1 (3):..........%s ", (outp[2] ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 4, 1, "Lampada Quarto2 (4):..........%s ", (outp[3] ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 5, 1, "Ar-condicionado Quarto1 (1):..%s ", (outp[4] ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 6, 1, "Ar-condicionado Quarto2 (2):..%s ", (outp[5] ? "ON" : "OFF"));
     // mvwprintw(sensorsWindow, 10, 1, "Alarme: (2): %s", (alarm_bool ? "ON" : "OFF"));
 
     mvwprintw(sensorsWindow, 10, 1, "DB: %d", test);
