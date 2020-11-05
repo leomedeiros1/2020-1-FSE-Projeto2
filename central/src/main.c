@@ -91,6 +91,8 @@ void safeExit(int signal){
 
     // SEND MSG to Distributed: Turn actuators off
 
+    close_tcp();
+
     echo();
     endwin();
 
@@ -146,6 +148,8 @@ void *watchKeyboard(void *args){
 
                 if(tcp_send_int(to_send)){
                     mvwprintw(inputWindow, 1, 1, "Falha no envio do comando\n");
+                    mvwprintw(inputWindow, 2, 1, "> ");
+                    wscanw(inputWindow, "%d", &tmp[1]);
                 }
                 
                 noecho();

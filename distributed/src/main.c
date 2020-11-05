@@ -56,6 +56,8 @@ void safeExit(int signal){
 
     // Turn actuators off
 
+    close_tcp();
+
     if(signal){
         printf("Execução abortada pelo signal: %d\n", signal);
     }else{
@@ -101,6 +103,7 @@ void *handleTCPclient(void *args){ // polling -> alarm
 void *handleTCPserver(void *args){
     printf("TCP Server up\n");
     while(1){
+        printf("TCP Server: Esperando nova conexao\n");
         if(tcp_wait_client()){
             continue;
         }
