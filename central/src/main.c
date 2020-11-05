@@ -126,13 +126,12 @@ int startThreads(WINDOW *inputWindow, WINDOW *sensorsWindow){
 
 void *watchKeyboard(void *args){
     WINDOW *inputWindow = (WINDOW *) args;
-    wclear(inputWindow);
     int op_code;
     box(inputWindow, 0, 0);
     wrefresh(inputWindow);
-    while((op_code = getch()) != CMD_EXIT){
+    while((op_code = getch()) != KEY_F(1)){
         switch(op_code){
-            case CMD_1:{
+            case KEY_F(2):{
                 echo();
 
                 int tmp;
@@ -153,7 +152,7 @@ void *watchKeyboard(void *args){
                 
                 noecho();
             }
-            case CMD_2:{
+            case KEY_F(3):{
                 echo();
                 int tmp;
                 mvwprintw(inputWindow, 1, 1, "Insira ... qual ar      ");
