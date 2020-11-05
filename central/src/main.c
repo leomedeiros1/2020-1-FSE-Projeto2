@@ -227,6 +227,6 @@ void print_sensors(WINDOW *sensorsWindow){
     mvwprintw(sensorsWindow, 6, 1, "Ar-condicionado Quarto2 (2): %s", (outp[5] ? "ON" : "OFF"));
     // mvwprintw(sensorsWindow, 10, 1, "Alarme: (2): %s", (alarm_bool ? "ON" : "OFF"));
 
-    mvwprintw(sensorsWindow, 10, 1, "DB: %d - %d", test, outp[6]);
+    mvwprintw(sensorsWindow, 10, 1, "DB: %d - %d", test, outp[5]);
     wrefresh(sensorsWindow);
 }
