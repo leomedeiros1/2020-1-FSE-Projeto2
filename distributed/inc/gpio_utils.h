@@ -34,6 +34,8 @@
 #define COD_OPENNING_SENSOR_6 0xE0 // Sensor Abertura 06 (Janela Quarto 02) - 21
 
 int init_bcm2835();
-int set_device(int key);
+int set_device(int key, int outp[]);
+int get_gpio_inpt(int inpt[]);
+void get_gpio_all(int inpt[], int outp[]);
 
 #endif

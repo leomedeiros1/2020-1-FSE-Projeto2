@@ -9,8 +9,12 @@ typedef struct data_comm{
 }data_comm;
 
 int init_tcp();
-void *handleTCPserver(void *args);
 int tcp_send_int(int val);
+int tcp_recv_int(int *val);
+int tcp_send_data_comm(data_comm *data);
+int tcp_send_arr(int arr[], int len);
+int tcp_wait_client();
+void tcp_close_tmp_client();
 void close_tcp();
 
 #endif

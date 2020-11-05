@@ -6,6 +6,8 @@
 
 #include "tcp_utils.h"
 
+#include "gpio_utils.h"
+
 #define DESTINATION_PORT 10026
 #define DESTINATION_IP "192.168.0.53"
 
@@ -28,7 +30,7 @@ unsigned int tmp_client_len;
 int init_tcp(){
     // Init server
     unsigned short server_port = LOCAL_PORT;
-    char *server_ip = LOCAL_IP;
+    // char *server_ip = LOCAL_IP;
 
     if((server_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0){
         return -1;
@@ -64,37 +66,46 @@ int init_tcp(){
     }
     return 0;
 }
-
-void *handleTCPserver(void *args){
-    while(1){
-        tmp_client_len = sizeof(tmp_client_addr);
-        if((tmp_client_socket = accept(server_socket, 
-            (struct sockaddr *) &tmp_client_addr, 
-            &tmp_client_len)) < 0)
-        {
-            continue;
-        }
-
-        int recv_size;
-        int comm[3]; 
-        if((recv_size = recv(tmp_client_socket, comm, sizeof(data_comm), 0)) < 0){
-			continue;
-		}
-
-        //trata
-        
-
-        close(tmp_client_socket);
-    }
-    return NULL;
-}
-
 int tcp_send_int(int val){
     if(send(client_socket, &val, sizeof(val), 0) < sizeof(val)){
         return -1;
     }
     // recv?
     return 0;
+}
+
+int tcp_wait_client(){
+    tmp_client_len = sizeof(tmp_client_addr);
+    if((tmp_client_socket = accept(server_socket, 
+        (struct sockaddr *) &tmp_client_addr, 
+        &tmp_client_len)) < 0)
+    {
+        // continue;
+        return -1;
+    }
+
+    return 0;
+}
+
+int tcp_recv_int(int *val){
+    int recv_size = sizeof(val);
+    if((recv_size = recv(tmp_client_socket, val, sizeof(data_comm), 0)) < 0){
+        // continue;
+        return -1;
+    }
+    return 0;
+}
+
+int tcp_send_arr(int arr[], int len){
+    if(send(client_socket, &arr, len, 0) < len){
+        return -1;
+    }
+    // recv?
+    return 0;
+}
+
+void tcp_close_tmp_client(){
+    close(tmp_client_socket);
 }
 
 void close_tcp(){

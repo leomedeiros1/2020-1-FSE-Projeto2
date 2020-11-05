@@ -128,6 +128,7 @@ void *watchKeyboard(void *args){
                 mvwprintw(inputWindow, 2, 1, "> ");
                 wscanw(inputWindow, "%d", &tmp[0]);
                 mvwprintw(inputWindow, 1, 1, "Insira ... 0 = desliga, 1 liga");
+                mvwprintw(inputWindow, 2, 1, "                               ");
                 mvwprintw(inputWindow, 2, 1, "> ");
                 wscanw(inputWindow, "%d", &tmp[1]);
 

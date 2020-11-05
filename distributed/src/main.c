@@ -7,18 +7,20 @@
 #include <pthread.h>
 #include <bcm2835.h>
 
-#include <gpio_utils.h>
-#include <tcp_utils.h>
+#include "gpio_utils.h"
+#include "tcp_utils.h"
 
 pthread_t tcp_client_thread;
 pthread_t tcp_server_thread;
 
-void *TCPclient(void *args){return NULL;}
-void *HandleTCPserver(void *args){return NULL;}
+void *handleTCPclient(void *args);
+void *handleTCPserver(void *args);
 
 int startThreads();
 
 void safeExit(int signal);
+
+int inpt[8], outp[6];
 
 int main(){   
     // Add signals to safe exit
@@ -32,6 +34,7 @@ int main(){
         exit(1);
     }
 
+    get_gpio_all(inpt, outp);
     startThreads();
 
     pthread_join(tcp_server_thread, NULL);
@@ -55,15 +58,58 @@ void safeExit(int signal){
 }
 
 int startThreads(){
-    if(pthread_create(&tcp_client_thread, NULL, TCPclient, NULL)){
+    if(pthread_create(&tcp_client_thread, NULL, handleTCPclient, NULL)){
         fprintf(stderr, "ERRO: Falha na criacao de thread(1)\n");
         exit(-1);
     }
 
-    if(pthread_create(&tcp_server_thread, NULL, HandleTCPserver, NULL)){
-        fprintf(stderr, "ERRO: Falha na criacao de thread(1)\n");
-        exit(-1);
+    if(pthread_create(&tcp_server_thread, NULL, handleTCPserver, NULL)){
+        fprintf(stderr, "ERRO: Falha na criacao de thread(2)\n");
+        exit(-2);
     }
 
     return 0;
+}
+
+void *handleTCPclient(void *args){ // polling -> alarm
+    while(1){
+        // read gpio inpt]
+        int val;
+        if((val = get_gpio_inpt(inpt)) != 0){
+            // send_int
+            tcp_send_int(val);
+        }else{
+            tcp_send_int(0x0);
+        }
+        // bme_get_temp e hum
+        // tcp_send_double temp
+        // tcp_send_double hum
+        usleep(200000);
+    }
+
+    return NULL;
+}
+
+void *handleTCPserver(void *args){
+    while(1){
+        if(tcp_wait_client()){
+            continue;
+        }
+
+        int comm; 
+        if(tcp_recv_int(&comm)){
+            continue;
+        }
+        printf("Comando recebido 0x%x\n", comm);
+        //trata
+        if(comm == 0xFF){
+            tcp_send_arr(inpt, sizeof(inpt));
+            tcp_send_arr(outp, sizeof(inpt));
+        }else{
+            set_device(comm, outp);
+        }
+
+        tcp_close_tmp_client();
+    }
+    return NULL;
 }
