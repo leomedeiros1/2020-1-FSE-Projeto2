@@ -16,7 +16,7 @@ pthread_t keyboard_thread;
 pthread_t tcp_server_thread;
 
 int inpt[8], outp[6];
-float temp=999, hum=999;
+float temp=0.0f, hum=0.0f;
 int test=0;
 
 void *watchKeyboard(void *args);
@@ -201,18 +201,19 @@ void *handleTCPserver(void *args){
         if(tcp_recv_data_comm(&comm) == 0){
             int command = comm.command;
             if(command == 0xFF){
-                // Tudo ok
+                // Nada a mudar;
                 ;
             }
-            else if(command & 0xF0){
-                //ALAAAARM
+            else if(command & 0x10){
+                // if(alarm) make_some_noise();
                 inpt[command & 0x0F] = 1 - inpt[command & 0x0F];
-            }else if(command != 0xFF){
+            }else{
                 outp[command & 0x0F] = 1 - outp[command & 0x0F];
             }
-            // if(comm.temp > 0.0f && comm.temp <50.0f)
+
+            if(comm.temp > 0.0f && comm.temp <50.0f)
                 temp = comm.temp;
-            // if(comm.hum > 0.0f && comm.hum <100.0f)
+            if(comm.hum > 0.0f && comm.hum <100.0f)
                 hum = comm.hum;
         }
 
@@ -246,8 +247,19 @@ void print_sensors(WINDOW *sensorsWindow){
     mvwprintw(sensorsWindow, 6, 1, "Ar-condicionado Quarto2 (2):..%s ", (outp[5] ? "ON" : "OFF"));
     mvwprintw(sensorsWindow, 7, 1, "DB: %d", test);
 
-    mvwprintw(sensorsWindow, 8, 1, "Temperatura :.................%.2f ", temp);
-    mvwprintw(sensorsWindow, 9, 1, "Humidade :....................%.2f ", hum);
+    if(temp != 0.0f){
+        mvwprintw(sensorsWindow, 8, 1, "Temperatura :.................%.2f ", temp);
+    }else{
+        mvwprintw(sensorsWindow, 8, 1, "Temperatura :..Aguardando servidor ");
+    }
+
+    if(hum != 0.0f){
+        mvwprintw(sensorsWindow, 9, 1, "Humidade :....................%.2f ", hum);
+    }else{
+        mvwprintw(sensorsWindow, 9, 1, "Humidade :.....Aguardando servidor ");
+    }
+
+    
     // mvwprintw(sensorsWindow, 10, 1, "Alarme: (2): %s", (alarm_bool ? "ON" : "OFF"));
 
     wrefresh(sensorsWindow);

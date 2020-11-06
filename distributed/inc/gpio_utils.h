@@ -18,12 +18,12 @@
 #define OPENNING_SENSOR_5 RPI_V2_GPIO_P1_38 // Sensor Abertura 05 (Janela Quarto 01) - 20
 #define OPENNING_SENSOR_6 RPI_V2_GPIO_P1_40 // Sensor Abertura 06 (Janela Quarto 02) - 21
 
-#define COD_LAMP_1 0x01
-#define COD_LAMP_2 0x02  // Lâmpada 02 (Sala) - 18
-#define COD_LAMP_3 0x03  // Lâmpada 03 (Quarto 01) - 27
-#define COD_LAMP_4 0x04  // Lâmpada 04 (Quarto 02) - 22
-#define COD_AIR_1 0x05   // Ar-Condicionado 01 (Quarto 01) - 23
-#define COD_AIR_2 0x06   // Ar-Condicionado 02 (Quarto 02) - 24
+#define COD_LAMP_1 0x00
+#define COD_LAMP_2 0x01  // Lâmpada 02 (Sala) - 18
+#define COD_LAMP_3 0x02  // Lâmpada 03 (Quarto 01) - 27
+#define COD_LAMP_4 0x03  // Lâmpada 04 (Quarto 02) - 22
+#define COD_AIR_1 0x04   // Ar-Condicionado 01 (Quarto 01) - 23
+#define COD_AIR_2 0x05   // Ar-Condicionado 02 (Quarto 02) - 24
 #define COD_PRESENCE_SENSOR_1 0x10 // Sensor de Presença 01 (Sala) - 25
 #define COD_PRESENCE_SENSOR_2 0x11 // Sensor de Presença 02 (Cozinha) - 26
 #define COD_OPENNING_SENSOR_1 0x12 // Sensor Abertura 01 (Porta Cozinha) - 05

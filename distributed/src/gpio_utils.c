@@ -91,6 +91,7 @@ void get_gpio_outp(int outp[]){
 }
 
 int get_gpio_change(int inpt[], int outp[]){
+    // inpt é prioridade por causa do alarme, entao vai primeiro
     if(inpt[0] != bcm2835_gpio_lev(PRESENCE_SENSOR_1)){
         inpt[0] = bcm2835_gpio_lev(PRESENCE_SENSOR_1);
         return COD_PRESENCE_SENSOR_1;
