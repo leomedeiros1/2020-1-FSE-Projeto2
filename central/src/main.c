@@ -287,7 +287,7 @@ void csv_write(int command){
         if(command == HEX_ALARM_CODE){
             fprintf(arq, "Ativa/Desativar Alarme, %s", asctime (timeinfo));
         }else{
-            fprintf(arq, "Ativa/Desativar dispositivo %0x02X, %s", command, asctime (timeinfo));
+            fprintf(arq, "Ativa/Desativar dispositivo 0x%02X, %s", command, asctime (timeinfo));
 
         }
     }
