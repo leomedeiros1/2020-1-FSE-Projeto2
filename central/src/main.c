@@ -193,9 +193,9 @@ void *handleTCPserver(void *args){
         print_sensors(sensorsWindow);
         int f;
         if((f=tcp_wait_client())){
-            continue;
-            mvwprintw(sensorsWindow, 10, 1, "Erro no tcp: (2): %s",  f));
+            mvwprintw(sensorsWindow, 10, 1, "Erro no tcp: (2): %s",  f);
             wrefresh(sensorsWindow);
+            continue;
         }
         data_comm comm;
         if(tcp_recv_data_comm(&comm) == 0){
