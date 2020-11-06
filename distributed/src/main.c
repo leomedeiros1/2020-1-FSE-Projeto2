@@ -150,7 +150,7 @@ void *handleTCPserver(void *args){
         if(tcp_recv_int(&comm)){
             continue;
         }
-        printf("TCP Server: Comando recebido 0x%x\n", comm);
+        printf("TCP Server: Comando recebido 0x%02X\n", comm);
         //trata
         if(comm == 0xFF){
             tcp_send_arr(inpt, sizeof(inpt));

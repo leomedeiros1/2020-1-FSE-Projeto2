@@ -12,12 +12,17 @@
 #define MIN_ROWS 24
 #define MIN_COLS 90
 
+#define HEX_ALARM_CODE 0xFF00
+
+static const char CSV_DATA_PATH[] = "./data.csv";
+
 pthread_t keyboard_thread;
 pthread_t tcp_server_thread;
 
 int inpt[8], outp[6];
 float temp=0.0f, hum=0.0f;
 int test=0;
+int alarm_bool=0;
 
 void *watchKeyboard(void *args);
 void *handleTCPserver(void *args);
@@ -26,6 +31,9 @@ void printMenu(WINDOW *menuWindow);
 void print_sensors(WINDOW *sensorsWindow);
 
 int startThreads(WINDOW *inputWindow, WINDOW *sensorsWindow);
+
+int send_command(int command);
+void csv_write(int command);
 
 void safeExit(int signal);
 
@@ -121,28 +129,36 @@ int startThreads(WINDOW *inputWindow, WINDOW *sensorsWindow){
 
 void *watchKeyboard(void *args){
     WINDOW *inputWindow = (WINDOW *) args;
+    wclear(inputWindow);
     int op_code;
     box(inputWindow, 0, 0);
     wrefresh(inputWindow);
+    int b_clear=0;
     while((op_code = getch()) != KEY_F(1)){
         switch(op_code){
             case KEY_F(2):{
                 echo();
 
                 int tmp;
-                mvwprintw(inputWindow, 1, 1, "Insira ... qual lamp     ");
+                mvwprintw(inputWindow, 1, 1, "Insira o ID da lâmpada que seja alterar       ");
                 mvwprintw(inputWindow, 2, 1, "> ");
                 wscanw(inputWindow, "%d", &tmp);
 
+                if(tmp>4){
+                    mvwprintw(inputWindow, 1, 1, "ID inválido                                  ");
+                    mvwprintw(inputWindow, 2, 1, "                                             ");
+                    b_clear=0;
+                }
+
                 int to_send = 0;
-                to_send+=tmp;
+                to_send+=tmp-1;
                 // to_send += 0x10 * (tmp[0]);
                 // to_send |= 0x0F & tmp[1];        
 
-                if((op_code=tcp_send_int(to_send))){
-                    mvwprintw(inputWindow, 1, 1, "Falha no envio do comando (%d)\n", op_code);
-                    mvwprintw(inputWindow, 2, 1, "> ");
-                    wscanw(inputWindow, "%d", &tmp);
+                if(send_command(to_send)){
+                    ;
+                }else{
+                    b_clear=1;
                 }
                 
                 noecho();
@@ -151,25 +167,41 @@ void *watchKeyboard(void *args){
             case KEY_F(3):{
                 echo();
                 int tmp;
-                mvwprintw(inputWindow, 1, 1, "Insira ... qual ar      ");
+                mvwprintw(inputWindow, 1, 1, "Insira o ID do aparelho que seja alterar         ");
                 mvwprintw(inputWindow, 2, 1, "> ");
                 wscanw(inputWindow, "%d", &tmp);
 
-                int to_send = 4;
+                if(tmp>4){
+                    mvwprintw(inputWindow, 1, 1, "ID inválido                                  ");
+                    mvwprintw(inputWindow, 2, 1, "                                             ");
+                    b_clear=0;
+                }
+
+                int to_send = 3;
                 to_send+=tmp;
 
-                if((op_code=tcp_send_int(to_send))){
+                if(send_command(to_send)){
                     //faio
+                }else{
+                    b_clear=1;
                 }
                 noecho();
                 break;
             }
             case KEY_F(4):{
                 // alarm = 1 xD
+                alarm_bool = 1-alarm_bool;
+                mvwprintw(inputWindow, 1, 1, "Alarme alterado para: %s                 ", (alarm_bool ? "ON" : "OFF"));
+                csv_write(HEX_ALARM_CODE);
+                b_clear=0;
+                break;
+            }
+            case KEY_F(5):{
+                // definir temp
                 break;
             }
         }  
-        wclear(inputWindow);
+        if(b_clear) wclear(inputWindow);
         box(inputWindow, 0, 0);
         wrefresh(inputWindow);
     }
@@ -224,7 +256,53 @@ void *handleTCPserver(void *args){
     return NULL;
 }
 
+int send_command(int command){
+    int ret_val=0;
+    ret_val = tcp_send_int(command);
+    csv_write(command);
+    return ret_val;
+}
+
+void csv_write(int command){
+    // Open csv
+    FILE *arq;
+    arq = fopen(CSV_DATA_PATH, "r+");
+    if(arq){
+        fseek(arq, 0, SEEK_END);
+    }
+    else{
+        arq = fopen(CSV_DATA_PATH, "a");
+        // Header
+        fprintf(arq, "Comando, Data e Hora\n");
+    }
+
+    if(arq){
+        time_t rawtime;
+        struct tm * timeinfo;
+
+        time(&rawtime);
+        timeinfo = localtime(&rawtime);
+
+        if(command == HEX_ALARM_CODE){
+            fprintf(arq, "Ativa/Desativar Alarme, %s", asctime (timeinfo));
+        }else{
+            fprintf(arq, "Ativa/Desativar dispositivo %02X, %s", command, asctime (timeinfo));
+
+        }
+    }
+    else{
+        endwin();
+        printf("Não foi possivel abrir o arquivo para csv.\n");
+        exit(-1);
+    }
+
+    // Close CSV
+    fclose(arq); 
+    return;
+}
+
 void printMenu(WINDOW *menuWindow){
+    wclear(menuWindow);
     box(menuWindow, 0, 0);
     wrefresh(menuWindow);
     mvwprintw(menuWindow, 1, 1, "Lista de comandos disponíveis:");
