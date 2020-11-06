@@ -2,10 +2,8 @@
 #define TCP_UTILS
 
 typedef struct data_comm{
-    int sensor_presence[2];
-    int sensor_open[2];
-    int control_air[2];
-    int control_lamp[4];
+    int command;
+    float temp, hum;
 }data_comm;
 
 int init_tcp_server();
@@ -16,6 +14,7 @@ int tcp_send_int(int val);
 int tcp_recv_double(double *val);
 int tcp_recv_float(float *val);
 int tcp_recv_arr(int arr[], int len);
+int tcp_recv_data_comm(data_comm *data);
 void tcp_close_tmp_client();
 void close_tcp();
 

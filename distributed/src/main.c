@@ -112,28 +112,24 @@ int startThreads(){
 void *handleTCPclient(void *args){ // polling -> alarm
     printf("TCP Client up");
     while(1){
-        
+        data_comm to_send;
         // read gpio inpt]
         int val;
         if((val = get_gpio_change(inpt, outp)) != 0){
-            tcp_send_int(val);
+            to_send.command = val;
             printf("TCP Client: Encontrei uma mudança de estado\n");
         }else{
-            tcp_send_int(0xFF);
+            to_send.command = 0xFF;
             printf("TCP Client: Nada parar ver por aqui\n");
         }
-        // bme_get_temp e hum
-        // tcp_send_double temp
-        // tcp_send_double hum
-        float temp, hum;
-        int rslt = get_sensor_data_forced_mode(&dev, &temp, &hum);
+
+        int rslt = get_sensor_data_forced_mode(&dev, &to_send.temp, &to_send.hum);
         if (rslt == BME280_OK){
-            if(tcp_send_float(temp)) printf("Faio1\n");
-            if(tcp_send_float(hum)) printf("Faio1\n");
-            printf("  %f %f \n", temp, hum);
+            printf("  %f %f \n", to_send.temp, to_send.hum);
         }else{
             printf("XD\n");
         }
+        tcp_send_data_comm(to_send);
         // usleep(2000000);
         sleep(2);
     }

@@ -194,24 +194,20 @@ void *handleTCPserver(void *args){
         if(tcp_wait_client()){
             continue;
         }
-        int comm;
-        if(tcp_recv_int(&comm) == 0){
-            if(comm & 0xF0){
+        data_comm comm;
+        if(tcp_recv_data_comm(&comm) == 0){
+            int command = comm.command;
+            if(command & 0xF0){
                 //ALAAAARM
-                inpt[comm & 0x0F] = 1 - inpt[comm & 0x0F];
-            }else if(comm != 0xFF){
-                outp[comm & 0x0F] = 1 - outp[comm & 0x0F];
+                inpt[command & 0x0F] = 1 - inpt[command & 0x0F];
+            }else if(command != 0xFF){
+                outp[command & 0x0F] = 1 - outp[command & 0x0F];
             }
+            // if(comm.temp > 0.0f && comm.temp <50.0f)
+                temp = comm.temp;
+            // if(comm.hum > 0.0f && comm.hum <100.0f)
+                hum = comm.hum;
         }
-        float _temp, _hum;
-        tcp_wait_client();
-        tcp_recv_float(&_temp);
-        tcp_wait_client();
-        tcp_recv_float(&_hum);
-        // if(_temp > 0.0f && _temp <50.0f)
-            temp = _temp;
-        // if(_hum > 0.0f && _hum <100.0f)
-            hum = _hum;
 
         tcp_close_tmp_client();
 

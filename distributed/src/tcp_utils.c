@@ -65,6 +65,21 @@ int init_tcp_client(){
     return 0;
 }
 
+int tcp_send_data_comm(data_comm data){
+    init_tcp_client();
+    if(connect(client_socket, (struct sockaddr *) &target_addr, 
+							sizeof(target_addr)) < 0)
+    {
+        return -5;
+    }
+    if(send(client_socket, &data, sizeof(data), 0) < sizeof(data)){
+        return -1;
+    }
+    // recv?
+    close(client_socket);
+    return 0;
+}
+
 int tcp_send_int(int val){
     init_tcp_client();
     if(connect(client_socket, (struct sockaddr *) &target_addr, 
@@ -126,7 +141,7 @@ int tcp_wait_client(){
 
 int tcp_recv_int(int *val){
     int recv_size = sizeof(val);
-    if((recv_size = recv(tmp_client_socket, val, sizeof(data_comm), 0)) < 0){
+    if((recv_size = recv(tmp_client_socket, val, sizeof(int), 0)) < sizeof(int)){
         // continue;
         return -1;
     }

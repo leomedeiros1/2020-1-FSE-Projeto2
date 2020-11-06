@@ -79,7 +79,16 @@ int tcp_wait_client(){
 
 int tcp_recv_int(int *val){
     int recv_size = sizeof(val);
-    if((recv_size = recv(tmp_client_socket, val, sizeof(data_comm), 0)) < 0){
+    if((recv_size = recv(tmp_client_socket, val, sizeof(int), 0)) < sizeof(int)){
+        // continue;
+        return -1;
+    }
+    return 0;
+}
+
+int tcp_recv_data_comm(data_comm *data){
+    int recv_size = sizeof(data);
+    if((recv_size = recv(tmp_client_socket, data, sizeof(data_comm), 0)) < sizeof(data_comm)){
         // continue;
         return -1;
     }
