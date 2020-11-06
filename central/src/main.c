@@ -200,7 +200,11 @@ void *handleTCPserver(void *args){
         data_comm comm;
         if(tcp_recv_data_comm(&comm) == 0){
             int command = comm.command;
-            if(command & 0xF0){
+            if(command == 0xFF){
+                // Tudo ok
+                ;
+            }
+            else if(command & 0xF0){
                 //ALAAAARM
                 inpt[command & 0x0F] = 1 - inpt[command & 0x0F];
             }else if(command != 0xFF){
