@@ -191,8 +191,11 @@ void *handleTCPserver(void *args){
     while(1){
         ++test;
         print_sensors(sensorsWindow);
-        if(tcp_wait_client()){
+        int f;
+        if((f=tcp_wait_client())){
             continue;
+            mvwprintw(sensorsWindow, 10, 1, "Erro no tcp: (2): %s",  f));
+            wrefresh(sensorsWindow);
         }
         data_comm comm;
         if(tcp_recv_data_comm(&comm) == 0){
@@ -237,11 +240,11 @@ void print_sensors(WINDOW *sensorsWindow){
     mvwprintw(sensorsWindow, 4, 1, "Lampada Quarto2 (4):..........%s ", (outp[3] ? "ON" : "OFF"));
     mvwprintw(sensorsWindow, 5, 1, "Ar-condicionado Quarto1 (1):..%s ", (outp[4] ? "ON" : "OFF"));
     mvwprintw(sensorsWindow, 6, 1, "Ar-condicionado Quarto2 (2):..%s ", (outp[5] ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 7, 1, "DB: %d", test);
 
     mvwprintw(sensorsWindow, 8, 1, "Temperatura :.................%.2f ", temp);
     mvwprintw(sensorsWindow, 9, 1, "Humidade :....................%.2f ", hum);
     // mvwprintw(sensorsWindow, 10, 1, "Alarme: (2): %s", (alarm_bool ? "ON" : "OFF"));
 
-    mvwprintw(sensorsWindow, 10, 1, "DB: %d", test);
     wrefresh(sensorsWindow);
 }
