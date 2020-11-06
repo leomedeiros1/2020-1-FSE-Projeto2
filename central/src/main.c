@@ -202,8 +202,8 @@ void *watchKeyboard(void *args){
             }
         }  
         if(b_clear) wclear(inputWindow);
-        box(inputWindow, 0, 0);
-        wrefresh(inputWindow);
+        // box(inputWindow, 0, 0);
+        // wrefresh(inputWindow);
     }
     return NULL;
 }
@@ -238,6 +238,7 @@ void *handleTCPserver(void *args){
             }
             else if(command & 0x10){
                 // if(alarm) make_some_noise();
+                if(alarm_bool) mvwprintw(sensorsWindow, 7, 10, "ABC ");
                 inpt[command & 0x0F] = 1 - inpt[command & 0x0F];
             }else{
                 outp[command & 0x0F] = 1 - outp[command & 0x0F];
@@ -286,7 +287,7 @@ void csv_write(int command){
         if(command == HEX_ALARM_CODE){
             fprintf(arq, "Ativa/Desativar Alarme, %s", asctime (timeinfo));
         }else{
-            fprintf(arq, "Ativa/Desativar dispositivo %02X, %s", command, asctime (timeinfo));
+            fprintf(arq, "Ativa/Desativar dispositivo %0x02X, %s", command, asctime (timeinfo));
 
         }
     }
@@ -338,7 +339,7 @@ void print_sensors(WINDOW *sensorsWindow){
     }
 
     
-    // mvwprintw(sensorsWindow, 10, 1, "Alarme: (2): %s", (alarm_bool ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 10, 1, "Alarme:........................%s", (alarm_bool ? "ON" : "OFF"));
 
     wrefresh(sensorsWindow);
 }
