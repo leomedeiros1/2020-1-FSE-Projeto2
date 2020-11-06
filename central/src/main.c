@@ -202,8 +202,8 @@ void *watchKeyboard(void *args){
             }
         }  
         if(b_clear) wclear(inputWindow);
-        // box(inputWindow, 0, 0);
-        // wrefresh(inputWindow);
+        box(inputWindow, 0, 0);
+        wrefresh(inputWindow);
     }
     return NULL;
 }
@@ -339,7 +339,7 @@ void print_sensors(WINDOW *sensorsWindow){
     }
 
     
-    mvwprintw(sensorsWindow, 10, 1, "Alarme:........................%s", (alarm_bool ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 10, 1, "Alarme:.......................%s ", (alarm_bool ? "ON" : "OFF"));
 
     wrefresh(sensorsWindow);
 }
