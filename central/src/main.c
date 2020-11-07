@@ -361,13 +361,14 @@ void csv_write(int command){
 }
 
 void printMenu(WINDOW *menuWindow){
-    wclear(menuWindow);
+    // wclear(menuWindow);
     box(menuWindow, 0, 0);
     wrefresh(menuWindow);
     mvwprintw(menuWindow, 1, 1, "Lista de comandos disponíveis:");
     mvwprintw(menuWindow, 2, 1, "F2 - Alterar uma lampada");
     mvwprintw(menuWindow, 3, 1, "F3 - Alterar um ar-condicionado");
     mvwprintw(menuWindow, 4, 1, "F4 - Alterar alarme");
+    mvwprintw(menuWindow, 5, 1, "F5 - Alterar modo de funcionamento do ar-condicionado");
 
     mvwprintw(menuWindow, 6, 1, "F1 ou CTRL+C - Sair");
     wrefresh(menuWindow);
