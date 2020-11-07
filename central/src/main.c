@@ -209,7 +209,7 @@ void *watchKeyboard(void *args){
                     for(int i=2; i<8; ++i){ // Sensores de abertura
                         if(inpt[i] != 0){
                             check_s=0;
-                            mvwprintw(inputWindow, 1, 1, "É necessário ter todas as portas e janelas fechadas para ativar o alarme  ", (alarm_mode ? "ON" : "OFF"));
+                            mvwprintw(inputWindow, 1, 1, "Necessário ter todas as portas e janelas fechadas para ativar o alarme  ", (alarm_mode ? "ON" : "OFF"));
                             break;
                         }
                     }

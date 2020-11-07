@@ -137,7 +137,7 @@ void *handleTCPserver(void *args){
         if(tcp_wait_client()){
             continue;
         }
-        printf("TCP Server: Client connected\n");
+        printf("TCP Server: Cliente conectado\n");
 
         int comm; 
         if(tcp_recv_int(&comm)){
