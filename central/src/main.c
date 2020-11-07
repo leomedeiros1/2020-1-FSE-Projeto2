@@ -66,9 +66,9 @@ int main(){
     int rows, columns;
     getmaxyx(stdscr, rows, columns);
     while(rows < MIN_ROWS || columns < MIN_COLS){
-        mvprintw(0, 0, "Seu terminal é muito pequeno para usar este programa, por favor reajuste\0");
-        mvprintw(1, 0, "Minimos: %d linhas e %d colunas\0", MIN_ROWS, MIN_COLS);
-        mvprintw(2, 0, "Atual: %d linhas e %d colunas\0", rows, columns);
+        mvprintw(0, 0, "Seu terminal é muito pequeno para usar este programa, por favor reajuste\n");
+        mvprintw(1, 0, "Minimos: %d linhas e %d colunas\n", MIN_ROWS, MIN_COLS);
+        mvprintw(2, 0, "Atual: %d linhas e %d colunas\n", rows, columns);
         refresh();
         usleep(500000);
         getmaxyx(stdscr, rows, columns);
@@ -154,13 +154,13 @@ void *watchKeyboard(void *args){
                 echo();
 
                 int tmp;
-                mvwprintw(inputWindow, 1, 1, "Insira o ID da lâmpada que seja alterar                                       \0");
-                mvwprintw(inputWindow, 2, 1, "> \0");
+                mvwprintw(inputWindow, 1, 1, "Insira o ID da lâmpada que seja alterar                                       \n");
+                mvwprintw(inputWindow, 2, 1, "> \n");
                 wscanw(inputWindow, "%d", &tmp);
 
                 if(tmp>4){
-                    mvwprintw(inputWindow, 1, 1, "ID inválido                                                                   \0");
-                    mvwprintw(inputWindow, 2, 1, "                                                                              \0");
+                    mvwprintw(inputWindow, 1, 1, "ID inválido                                                                   \n");
+                    mvwprintw(inputWindow, 2, 1, "                                                                              \n");
                     b_clear=0;
                 }
 
@@ -181,13 +181,13 @@ void *watchKeyboard(void *args){
             case KEY_F(3):{
                 echo();
                 int tmp;
-                mvwprintw(inputWindow, 1, 1, "Insira o ID do aparelho que seja alterar                                       \0");
-                mvwprintw(inputWindow, 2, 1, "> \0");
+                mvwprintw(inputWindow, 1, 1, "Insira o ID do aparelho que seja alterar                                       \n");
+                mvwprintw(inputWindow, 2, 1, "> \n");
                 wscanw(inputWindow, "%d", &tmp);
 
                 if(tmp>4){
-                    mvwprintw(inputWindow, 1, 1, "ID inválido                                                                   \0");
-                    mvwprintw(inputWindow, 2, 1, "                                                                              \0");
+                    mvwprintw(inputWindow, 1, 1, "ID inválido                                                                   \n");
+                    mvwprintw(inputWindow, 2, 1, "                                                                              \n");
                     b_clear=0;
                 }
 
@@ -209,14 +209,14 @@ void *watchKeyboard(void *args){
                     for(int i=2; i<8; ++i){ // Sensores de abertura
                         if(inpt[i] != 0){
                             check_s=0;
-                            mvwprintw(inputWindow, 1, 1, "Necessário ter todas as portas e janelas fechadas para ativar o alarme  \0", (alarm_mode ? "ON" : "OFF"));
+                            mvwprintw(inputWindow, 1, 1, "Necessário ter todas as portas e janelas fechadas para ativar o alarme  \n", (alarm_mode ? "ON" : "OFF"));
                             break;
                         }
                     }
                 }
                 if(check_s){
                     alarm_mode = 1-alarm_mode;
-                    mvwprintw(inputWindow, 1, 1, "Alarme alterado para: %s                                                       \0", (alarm_mode ? "ON" : "OFF"));
+                    mvwprintw(inputWindow, 1, 1, "Alarme alterado para: %s                                                       \n", (alarm_mode ? "ON" : "OFF"));
                     csv_write(HEX_ALARM_CODE);
                 }   
                 b_clear=0;
@@ -227,11 +227,11 @@ void *watchKeyboard(void *args){
                 echo();
                 if(temp_mode){
                     temp_mode=0;
-                    mvwprintw(inputWindow, 1, 1, "Modo de controle da temperatura alterado para: %s                              \0", (temp_mode ? "ON" : "OFF"));
+                    mvwprintw(inputWindow, 1, 1, "Modo de controle da temperatura alterado para: %s                              \n", (temp_mode ? "ON" : "OFF"));
                     b_clear=0;
                 }else{
-                    mvwprintw(inputWindow, 1, 1, "Insira a nova temperatura desejada                                             \0");
-                    mvwprintw(inputWindow, 2, 1, "> \0");
+                    mvwprintw(inputWindow, 1, 1, "Insira a nova temperatura desejada                                             \n");
+                    mvwprintw(inputWindow, 2, 1, "> \n");
                     wscanw(inputWindow, "%f", &ref_temp);
                     temp_mode=1;
                 }
@@ -372,45 +372,45 @@ void printMenu(WINDOW *menuWindow){
     // wclear(menuWindow);
     box(menuWindow, 0, 0);
     wrefresh(menuWindow);
-    mvwprintw(menuWindow, 1, 1, "Lista de comandos disponíveis:\0");
-    mvwprintw(menuWindow, 2, 1, "F2 - Alterar uma lampada\0");
-    mvwprintw(menuWindow, 3, 1, "F3 - Alterar um ar-condicionado\0");
-    mvwprintw(menuWindow, 4, 1, "F4 - Alterar modo de funcionamento do ar-condicionado\0");
-    mvwprintw(menuWindow, 5, 1, "F5 - Alterar alarme\0");
+    mvwprintw(menuWindow, 1, 1, "Lista de comandos disponíveis:\n");
+    mvwprintw(menuWindow, 2, 1, "F2 - Alterar uma lampada\n");
+    mvwprintw(menuWindow, 3, 1, "F3 - Alterar um ar-condicionado\n");
+    mvwprintw(menuWindow, 4, 1, "F4 - Alterar modo de funcionamento do ar-condicionado\n");
+    mvwprintw(menuWindow, 5, 1, "F5 - Alterar alarme\n");
 
-    mvwprintw(menuWindow, 6, 1, "F1 ou CTRL+C - Sair\0");
+    mvwprintw(menuWindow, 6, 1, "F1 ou CTRL+C - Sair\n");
     wrefresh(menuWindow);
 }
 
 void print_sensors(WINDOW *sensorsWindow){
     box(sensorsWindow, 0, 0);
     wrefresh(sensorsWindow);
-    mvwprintw(sensorsWindow, 1, 1, "Lampada Cozinha (1):...........%s \0", (outp[0] ? "ON" : "OFF"));
-    mvwprintw(sensorsWindow, 2, 1, "Lampada Sala (2):..............%s \0", (outp[1] ? "ON" : "OFF"));
-    mvwprintw(sensorsWindow, 3, 1, "Lampada Quarto1 (3):...........%s \0", (outp[2] ? "ON" : "OFF"));
-    mvwprintw(sensorsWindow, 4, 1, "Lampada Quarto2 (4):...........%s \0", (outp[3] ? "ON" : "OFF"));
-    mvwprintw(sensorsWindow, 5, 1, "Ar-condicionado Quarto1 (1):...%s \0", (outp[4] ? "ON" : "OFF"));
-    mvwprintw(sensorsWindow, 6, 1, "Ar-condicionado Quarto2 (2):...%s \0", (outp[5] ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 1, 1, "Lampada Cozinha (1):...........%s \n", (outp[0] ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 2, 1, "Lampada Sala (2):..............%s \n", (outp[1] ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 3, 1, "Lampada Quarto1 (3):...........%s \n", (outp[2] ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 4, 1, "Lampada Quarto2 (4):...........%s \n", (outp[3] ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 5, 1, "Ar-condicionado Quarto1 (1):...%s \n", (outp[4] ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 6, 1, "Ar-condicionado Quarto2 (2):...%s \n", (outp[5] ? "ON" : "OFF"));
     
     char tmp_str[255] = "";
     sprintf(tmp_str, "Automatico - %.2f °C", ref_temp);
-    mvwprintw(sensorsWindow, 7, 1, "Controle do ar-condicionado:...%s    \0", temp_mode ? tmp_str : "Manual                       ");
+    mvwprintw(sensorsWindow, 7, 1, "Controle do ar-condicionado:...%s    \n", temp_mode ? tmp_str : "Manual                       ");
 
 
     if(temp != 0.0f){
-        mvwprintw(sensorsWindow, 8, 1, "Temperatura:...................%.2f \0", temp);
+        mvwprintw(sensorsWindow, 8, 1, "Temperatura:...................%.2f \n", temp);
     }else{
-        mvwprintw(sensorsWindow, 8, 1, "Temperatura:....Aguardando servidor \0");
+        mvwprintw(sensorsWindow, 8, 1, "Temperatura:....Aguardando servidor \n");
     }
 
     if(hum != 0.0f){
-        mvwprintw(sensorsWindow, 9, 1, "Humidade :.....................%.2f \0", hum);
+        mvwprintw(sensorsWindow, 9, 1, "Humidade :.....................%.2f \n", hum);
     }else{
-        mvwprintw(sensorsWindow, 9, 1, "Humidade :......Aguardando servidor \0");
+        mvwprintw(sensorsWindow, 9, 1, "Humidade :......Aguardando servidor \n");
     }
 
     
-    mvwprintw(sensorsWindow, 10, 1, "Alarme:........................%s \0", (alarm_mode ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 10, 1, "Alarme:........................%s \n", (alarm_mode ? "ON" : "OFF"));
 
     // mvwprintw(sensorsWindow, 10, 50, "DB: %d", test);
 
