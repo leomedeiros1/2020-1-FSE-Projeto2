@@ -114,20 +114,13 @@ void *handleTCPclient(void *args){ // polling -> alarm
     while(1){
         data_comm to_send;
         // read gpio inpt]
-        int val;
-        if((val = get_gpio_change(inpt, outp)) != 0){
-            to_send.command = val;
-            printf("TCP Client: Encontrei uma mudança de estado\n");
-        }else{
-            to_send.command = 0xFF;
-            printf("TCP Client: Nada parar ver por aqui\n");
-        }
+        to_send.command = get_gpio_change(inpt, outp);
 
         int rslt = get_sensor_data_forced_mode(&dev, &to_send.temp, &to_send.hum);
         if (rslt == BME280_OK){
-            printf("  %f %f \n", to_send.temp, to_send.hum);
+            // printf("  %f %f \n", to_send.temp, to_send.hum);
         }else{
-            printf("XD\n");
+            // printf("XD\n");
         }
         tcp_send_data_comm(to_send);
         // usleep(2000000);
@@ -154,7 +147,9 @@ void *handleTCPserver(void *args){
         //trata
         if(comm == 0xFF){
             tcp_send_arr(inpt, sizeof(inpt));
+            printf("inpt {%d %d %d %d %d %d %d %d}\n", inpt[0], inpt[1], inpt[2], inpt[3], inpt[4], inpt[5], inpt[6], inpt[7]);
             tcp_send_arr(outp, sizeof(outp));
+            printf("outp {%d %d %d %d %d %d}\n", outp[0], outp[1], outp[2], outp[3], outp[4], outp[5]);
         }else{
             set_device(comm, outp);
         }

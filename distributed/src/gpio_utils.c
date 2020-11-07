@@ -152,5 +152,5 @@ int get_gpio_change(int inpt[], int outp[]){
         return COD_AIR_2;
     }
 
-    return 0x0;
+    return 0xFF;
 }

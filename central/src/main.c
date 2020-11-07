@@ -202,7 +202,7 @@ void *watchKeyboard(void *args){
                 noecho();
                 break;
             }
-            case KEY_F(4):{
+            case KEY_F(5):{
                 // alarm = 1 xD
                 int check_s=1;
                 if(alarm_mode == 0){
@@ -222,17 +222,17 @@ void *watchKeyboard(void *args){
                 b_clear=0;
                 break;
             }
-            case KEY_F(5):{
+            case KEY_F(4):{
                 // definir temp
                 if(temp_mode){
                     temp_mode=0;
                     mvwprintw(inputWindow, 1, 1, "Modo de controle da temperatura alterado para: %s                              ", (temp_mode ? "ON" : "OFF"));
                     b_clear=0;
                 }else{
-                    temp_mode=1;
                     mvwprintw(inputWindow, 1, 1, "Insira a nova temperatura desejada                                             ");
                     mvwprintw(inputWindow, 2, 1, "> ");
                     wscanw(inputWindow, "%f", &ref_temp);
+                    temp_mode=1;
                 }
                 break;
             }
@@ -374,8 +374,8 @@ void printMenu(WINDOW *menuWindow){
     mvwprintw(menuWindow, 1, 1, "Lista de comandos disponíveis:");
     mvwprintw(menuWindow, 2, 1, "F2 - Alterar uma lampada");
     mvwprintw(menuWindow, 3, 1, "F3 - Alterar um ar-condicionado");
-    mvwprintw(menuWindow, 4, 1, "F4 - Alterar alarme");
-    mvwprintw(menuWindow, 5, 1, "F5 - Alterar modo de funcionamento do ar-condicionado");
+    mvwprintw(menuWindow, 4, 1, "F4 - Alterar modo de funcionamento do ar-condicionado");
+    mvwprintw(menuWindow, 5, 1, "F5 - Alterar alarme");
 
     mvwprintw(menuWindow, 6, 1, "F1 ou CTRL+C - Sair");
     wrefresh(menuWindow);
@@ -384,32 +384,32 @@ void printMenu(WINDOW *menuWindow){
 void print_sensors(WINDOW *sensorsWindow){
     box(sensorsWindow, 0, 0);
     wrefresh(sensorsWindow);
-    mvwprintw(sensorsWindow, 1, 1, "Lampada Cozinha (1):..........%s ", (outp[0] ? "ON" : "OFF"));
-    mvwprintw(sensorsWindow, 2, 1, "Lampada Sala (2):.............%s ", (outp[1] ? "ON" : "OFF"));
-    mvwprintw(sensorsWindow, 3, 1, "Lampada Quarto1 (3):..........%s ", (outp[2] ? "ON" : "OFF"));
-    mvwprintw(sensorsWindow, 4, 1, "Lampada Quarto2 (4):..........%s ", (outp[3] ? "ON" : "OFF"));
-    mvwprintw(sensorsWindow, 5, 1, "Ar-condicionado Quarto1 (1):..%s ", (outp[4] ? "ON" : "OFF"));
-    mvwprintw(sensorsWindow, 6, 1, "Ar-condicionado Quarto2 (2):..%s ", (outp[5] ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 1, 1, "Lampada Cozinha (1):...........%s ", (outp[0] ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 2, 1, "Lampada Sala (2):..............%s ", (outp[1] ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 3, 1, "Lampada Quarto1 (3):...........%s ", (outp[2] ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 4, 1, "Lampada Quarto2 (4):...........%s ", (outp[3] ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 5, 1, "Ar-condicionado Quarto1 (1):...%s ", (outp[4] ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 6, 1, "Ar-condicionado Quarto2 (2):...%s ", (outp[5] ? "ON" : "OFF"));
     
     char tmp_str[255] = "";
     sprintf(tmp_str, "Automatico - %f °C", ref_temp);
-    mvwprintw(sensorsWindow, 7, 1, "Controle do ar-condicionado:..%s", temp_mode ? tmp_str : "Manual");
+    mvwprintw(sensorsWindow, 7, 1, "Controle do ar-condicionado:...%s    ", temp_mode ? tmp_str : "Manual                       ");
 
 
     if(temp != 0.0f){
-        mvwprintw(sensorsWindow, 8, 1, "Temperatura :.................%.2f ", temp);
+        mvwprintw(sensorsWindow, 8, 1, "Temperatura :..................%.2f ", temp);
     }else{
-        mvwprintw(sensorsWindow, 8, 1, "Temperatura :..Aguardando servidor ");
+        mvwprintw(sensorsWindow, 8, 1, "Temperatura :...Aguardando servidor ");
     }
 
     if(hum != 0.0f){
-        mvwprintw(sensorsWindow, 9, 1, "Humidade :....................%.2f ", hum);
+        mvwprintw(sensorsWindow, 9, 1, "Humidade :.....................%.2f ", hum);
     }else{
-        mvwprintw(sensorsWindow, 9, 1, "Humidade :.....Aguardando servidor ");
+        mvwprintw(sensorsWindow, 9, 1, "Humidade :......Aguardando servidor ");
     }
 
     
-    mvwprintw(sensorsWindow, 10, 1, "Alarme:.......................%s ", (alarm_mode ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 10, 1, "Alarme:........................%s ", (alarm_mode ? "ON" : "OFF"));
 
     // mvwprintw(sensorsWindow, 10, 50, "DB: %d", test);
 
