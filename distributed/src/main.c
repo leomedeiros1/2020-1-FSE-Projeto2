@@ -123,8 +123,8 @@ void *handleTCPclient(void *args){ // polling -> alarm
             // printf("XD\n");
         }
         tcp_send_data_comm(to_send);
-        // usleep(2000000);
-        sleep(2);
+        usleep(2000000);
+        // sleep(2);
     }
 
     return NULL;
