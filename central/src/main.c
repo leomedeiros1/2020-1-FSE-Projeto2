@@ -144,7 +144,7 @@ int startThreads(WINDOW *inputWindow, WINDOW *sensorsWindow){
 
 void *watchKeyboard(void *args){
     WINDOW *inputWindow = (WINDOW *) args;
-    wclear(inputWindow);
+    // wclear(inputWindow);
     int op_code;
     box(inputWindow, 0, 0);
     wrefresh(inputWindow);
@@ -247,7 +247,7 @@ void *watchKeyboard(void *args){
 
 void *handleTCPserver(void *args){
     WINDOW *sensorsWindow = (WINDOW *) args;
-    wclear(sensorsWindow);
+    // wclear(sensorsWindow);
     box(sensorsWindow, 0, 0);
     wrefresh(sensorsWindow);
     
