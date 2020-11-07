@@ -18,14 +18,17 @@ static const char CSV_DATA_PATH[] = "./data.csv";
 
 pthread_t keyboard_thread;
 pthread_t tcp_server_thread;
+pthread_t alarm_thread;
 
 int inpt[8], outp[6];
-float temp=0.0f, hum=0.0f;
-int test=0;
-int alarm_bool=0;
+float temp=0.0f, hum=0.0f, ref_temp=0.0f;
+int test=0; // < TODO
+int alarm_mode=0; // 0 off, 1 on
+int temp_mode=0; // 0 manual, 1 automatico
 
 void *watchKeyboard(void *args);
 void *handleTCPserver(void *args);
+void *handleAlarm(void *args);
 
 void printMenu(WINDOW *menuWindow);
 void print_sensors(WINDOW *sensorsWindow);
@@ -82,6 +85,8 @@ int main(){
     startThreads(inputWindow, sensorsWindow);
 
     pthread_join(keyboard_thread, NULL);
+    pthread_cancel(tcp_server_thread);
+    pthread_cancel(alarm_thread);
 
     delwin(sensorsWindow);
     delwin(menuWindow);
@@ -95,6 +100,7 @@ void safeExit(int signal){
     // Finish threads
     pthread_cancel(keyboard_thread);
     pthread_cancel(tcp_server_thread);
+    pthread_cancel(alarm_thread);
     // SEND MSG to Distributed: Turn actuators off
 
     close_tcp();
@@ -124,6 +130,12 @@ int startThreads(WINDOW *inputWindow, WINDOW *sensorsWindow){
         exit(-2);
     }
 
+    if(pthread_create(&alarm_thread, NULL, handleAlarm, NULL)){
+        endwin();
+        fprintf(stderr, "ERRO: Falha na criacao de thread(3)\n");
+        exit(-3);
+    }
+
     return 0;
 }
 
@@ -140,13 +152,13 @@ void *watchKeyboard(void *args){
                 echo();
 
                 int tmp;
-                mvwprintw(inputWindow, 1, 1, "Insira o ID da lâmpada que seja alterar       ");
+                mvwprintw(inputWindow, 1, 1, "Insira o ID da lâmpada que seja alterar                                       ");
                 mvwprintw(inputWindow, 2, 1, "> ");
                 wscanw(inputWindow, "%d", &tmp);
 
                 if(tmp>4){
-                    mvwprintw(inputWindow, 1, 1, "ID inválido                                  ");
-                    mvwprintw(inputWindow, 2, 1, "                                             ");
+                    mvwprintw(inputWindow, 1, 1, "ID inválido                                                                   ");
+                    mvwprintw(inputWindow, 2, 1, "                                                                              ");
                     b_clear=0;
                 }
 
@@ -167,13 +179,13 @@ void *watchKeyboard(void *args){
             case KEY_F(3):{
                 echo();
                 int tmp;
-                mvwprintw(inputWindow, 1, 1, "Insira o ID do aparelho que seja alterar         ");
+                mvwprintw(inputWindow, 1, 1, "Insira o ID do aparelho que seja alterar                                       ");
                 mvwprintw(inputWindow, 2, 1, "> ");
                 wscanw(inputWindow, "%d", &tmp);
 
                 if(tmp>4){
-                    mvwprintw(inputWindow, 1, 1, "ID inválido                                  ");
-                    mvwprintw(inputWindow, 2, 1, "                                             ");
+                    mvwprintw(inputWindow, 1, 1, "ID inválido                                                                   ");
+                    mvwprintw(inputWindow, 2, 1, "                                                                              ");
                     b_clear=0;
                 }
 
@@ -190,14 +202,36 @@ void *watchKeyboard(void *args){
             }
             case KEY_F(4):{
                 // alarm = 1 xD
-                alarm_bool = 1-alarm_bool;
-                mvwprintw(inputWindow, 1, 1, "Alarme alterado para: %s                 ", (alarm_bool ? "ON" : "OFF"));
-                csv_write(HEX_ALARM_CODE);
+                int check_s=1;
+                if(alarm_mode == 0){
+                    for(int i=2; i<8; ++i){ // Sensores de abertura
+                        if(inpt[i] != 0){
+                            check_s=0;
+                            mvwprintw(inputWindow, 1, 1, "É necessário ter todas as portas e janelas fechadas para ativar o alarme  ", (alarm_mode ? "ON" : "OFF"));
+                            break;
+                        }
+                    }
+                }
+                if(check_s){
+                    alarm_mode = 1-alarm_mode;
+                    mvwprintw(inputWindow, 1, 1, "Alarme alterado para: %s                                                       ", (alarm_mode ? "ON" : "OFF"));
+                    csv_write(HEX_ALARM_CODE);
+                }   
                 b_clear=0;
                 break;
             }
             case KEY_F(5):{
                 // definir temp
+                if(temp_mode){
+                    temp_mode=0;
+                    mvwprintw(inputWindow, 1, 1, "Modo de controle da temperatura alterado para: %s                              ", (temp_mode ? "ON" : "OFF"));
+                    b_clear=0;
+                }else{
+                    temp_mode=1;
+                    mvwprintw(inputWindow, 1, 1, "Insira a nova temperatura desejada                                             ");
+                    mvwprintw(inputWindow, 2, 1, "> ");
+                    wscanw(inputWindow, "%f", &ref_temp);
+                }
                 break;
             }
         }  
@@ -238,7 +272,7 @@ void *handleTCPserver(void *args){
             }
             else if(command & 0x10){
                 // if(alarm) make_some_noise();
-                if(alarm_bool) mvwprintw(sensorsWindow, 7, 10, "ABC ");
+                if(alarm_mode) mvwprintw(sensorsWindow, 7, 10, "ABC ");
                 inpt[command & 0x0F] = 1 - inpt[command & 0x0F];
             }else{
                 outp[command & 0x0F] = 1 - outp[command & 0x0F];
@@ -250,11 +284,35 @@ void *handleTCPserver(void *args){
                 hum = comm.hum;
         }
 
+        if(temp_mode){
+            if(temp < ref_temp){
+                if(!outp[4])
+                    send_command(0x04);
+                if(!outp[5])
+                    send_command(0x05);
+            }
+        }
+
         tcp_close_tmp_client();
 
         // usleep(200000);
     }
     return NULL;
+}
+
+void *handleAlarm(void *args){
+    while(1){
+        int play_alarm=0;
+        if(alarm_mode == 1){
+            for(int i=0; i<8; ++i){
+                if(inpt[i]) play_alarm=1;
+            }
+        }
+        if(play_alarm){
+            system("omxplayer alarme.mp3 > /dev/null 2>&1");
+        }
+        usleep(500000);
+    }
 }
 
 int send_command(int command){
@@ -324,7 +382,11 @@ void print_sensors(WINDOW *sensorsWindow){
     mvwprintw(sensorsWindow, 4, 1, "Lampada Quarto2 (4):..........%s ", (outp[3] ? "ON" : "OFF"));
     mvwprintw(sensorsWindow, 5, 1, "Ar-condicionado Quarto1 (1):..%s ", (outp[4] ? "ON" : "OFF"));
     mvwprintw(sensorsWindow, 6, 1, "Ar-condicionado Quarto2 (2):..%s ", (outp[5] ? "ON" : "OFF"));
-    mvwprintw(sensorsWindow, 7, 1, "DB: %d", test);
+    
+    char tmp_str[255] = "";
+    sprintf(tmp_str, "Automatico - %f °C", ref_temp);
+    mvwprintw(sensorsWindow, 7, 1, "Controle do ar-condicionado:..%s", temp_mode ? tmp_str : "Manual");
+
 
     if(temp != 0.0f){
         mvwprintw(sensorsWindow, 8, 1, "Temperatura :.................%.2f ", temp);
@@ -339,7 +401,9 @@ void print_sensors(WINDOW *sensorsWindow){
     }
 
     
-    mvwprintw(sensorsWindow, 10, 1, "Alarme:.......................%s ", (alarm_bool ? "ON" : "OFF"));
+    mvwprintw(sensorsWindow, 10, 1, "Alarme:.......................%s ", (alarm_mode ? "ON" : "OFF"));
+
+    mvwprintw(sensorsWindow, 10, 50, "DB: %d", test);
 
     wrefresh(sensorsWindow);
 }
