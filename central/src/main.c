@@ -77,8 +77,11 @@ int main(){
     }
 
     WINDOW *sensorsWindow = newwin(LINES - 12, COLS, 0, 0);
+    wrefresh(sensorsWindow);
     WINDOW *menuWindow = newwin(8, COLS, LINES - 12, 0);
+    wrefresh(menuWindow);
     WINDOW *inputWindow = newwin(4, COLS, LINES - 4, 0);
+    wrefresh(inputWindow);
 
     printMenu(menuWindow);
 
