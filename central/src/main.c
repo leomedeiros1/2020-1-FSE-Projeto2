@@ -77,11 +77,8 @@ int main(){
     }
 
     WINDOW *sensorsWindow = newwin(LINES - 12, COLS, 0, 0);
-    wrefresh(sensorsWindow);
     WINDOW *menuWindow = newwin(8, COLS, LINES - 12, 0);
-    wrefresh(menuWindow);
     WINDOW *inputWindow = newwin(4, COLS, LINES - 4, 0);
-    wrefresh(inputWindow);
 
     printMenu(menuWindow);
 
@@ -104,7 +101,6 @@ void safeExit(int signal){
     pthread_cancel(keyboard_thread);
     pthread_cancel(tcp_server_thread);
     pthread_cancel(alarm_thread);
-    // SEND MSG to Distributed: Turn actuators off
 
     close_tcp();
 
@@ -143,6 +139,7 @@ int startThreads(WINDOW *inputWindow, WINDOW *sensorsWindow){
 }
 
 void *watchKeyboard(void *args){
+    usleep(200000);
     WINDOW *inputWindow = (WINDOW *) args;
     // wclear(inputWindow);
     int op_code;
