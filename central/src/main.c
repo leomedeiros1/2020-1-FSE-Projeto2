@@ -22,7 +22,7 @@ pthread_t alarm_thread;
 
 int inpt[8], outp[6];
 float temp=0.0f, hum=0.0f, ref_temp=0.0f;
-int test=0; // < TODO
+// int test=0; // 
 int alarm_mode=0; // 0 off, 1 on
 int temp_mode=0; // 0 manual, 1 automatico
 
@@ -102,8 +102,10 @@ void safeExit(int signal){
     pthread_cancel(tcp_server_thread);
     pthread_cancel(alarm_thread);
 
+    // finish tcp
     close_tcp();
 
+    // finish curses
     echo();
     endwin();
 
@@ -255,7 +257,7 @@ void *handleTCPserver(void *args){
     tcp_wait_client();
     tcp_recv_arr(outp, sizeof(outp));
     while(1){
-        ++test;
+        // ++test;
         print_sensors(sensorsWindow);
         int f;
         if((f=tcp_wait_client())){
@@ -286,8 +288,13 @@ void *handleTCPserver(void *args){
 
         if(temp_mode){
             if(temp < ref_temp){
-                if(!outp[4])
-                    send_command(0x04);
+                if(outp[4])  // ligado?
+                    send_command(0x04); // desliga
+                if(outp[5])
+                    send_command(0x05);
+            }else{
+                if(!outp[4]) // desligado?
+                    send_command(0x04); // liga
                 if(!outp[5])
                     send_command(0x05);
             }
@@ -404,7 +411,7 @@ void print_sensors(WINDOW *sensorsWindow){
     
     mvwprintw(sensorsWindow, 10, 1, "Alarme:.......................%s ", (alarm_mode ? "ON" : "OFF"));
 
-    mvwprintw(sensorsWindow, 10, 50, "DB: %d", test);
+    // mvwprintw(sensorsWindow, 10, 50, "DB: %d", test);
 
     wrefresh(sensorsWindow);
 }
