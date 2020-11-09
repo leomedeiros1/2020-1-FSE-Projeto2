@@ -10,6 +10,7 @@ Leonardo de Araujo Medeiros - 17/0038891
 4. Execute o binário gerado `$ make run`.
 
 * Nota: Idealmente o servidor distríbuido deve ser executado antes do central, para que as informações iniciais estejam disponíveis.
+* Problemas conhecidos: Quando o alarme é disparado caracteres estranhos aparecenem na tela, que só serão removidos na próxima atualização da tela.
 
 ### Detalhes
 * Leitura dos sensores realizada aproximadamente a cada `200ms`;
