@@ -317,7 +317,8 @@ void *handleAlarm(void *args){
             }
         }
         if(play_alarm){
-            system("omxplayer alarme.mp3 > /dev/null 2>&1");
+            system("omxplayer --no-keys alarme.mp3 > /dev/null 2>&1 & ");
+            sleep(2);
         }
         usleep(500000);
     }
